@@ -70,9 +70,21 @@ function pageTemplates($page_template) {
 */
 function authorizeMenu() {
 	add_submenu_page( 'options-general.php', 'Authorize.net Settings', 'Authorize.net Settings', 'manage_options', 'auth-settings', 'authSettings' );
+	add_submenu_page( 'options-general.php', 'Authorize.net Subscriptions', 'Authorize.net Subscriptions', 'manage_options', 'auth-subs', 'authSubs' );
+	add_submenu_page( 'options-general.php', 'Authorize.net Transactions', 'Authorize.net Transactions', 'manage_options', 'auth-trans', 'authTrans' );	
+	
+	
+	
 }
 add_action('admin_menu', 'authorizeMenu');
 
+function authTrans(){
+	include 'pages/transactions.php';
+}
+
+function authSubs(){
+	include 'pages/subscriptions.php';
+}
 
 function authSettings(){
 	include 'pages/settings.php';

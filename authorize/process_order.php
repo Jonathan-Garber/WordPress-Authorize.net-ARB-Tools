@@ -59,7 +59,7 @@ if (isset($_POST['doSignUp'])){
 	//product or service information		
 	$billing->productName = $_POST['productName'];
 	$billing->productDescription = $_POST['productDescription'];
-	$billing->productAmount = $_POST['productAmount'];
+	$billing->productAmount = $_POST['productAmount'];	
 	$billing->productOccurrences = $_POST['productOccurrences'];		
 	
 	//is this a subscription or single payment?		
@@ -91,12 +91,11 @@ if (isset($_POST['doSignUp'])){
 	}
 	
 	if ($billing->userID > 0){
-	//user is logged into the new account or was already logged into current account.
-	
+	//user is logged into the new account or was already logged into current account.	
 		if ($billing->transactionType == 'single'){
 			$processPayment = $billing->processPayment();			
 		}else{
-			$processARB = $billing->processARB();
+			$processARB = $billing->processARB();			
 		}
 	}
 }

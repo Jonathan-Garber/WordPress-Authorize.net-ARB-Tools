@@ -2,7 +2,7 @@
 <?php get_header();	?>
 		<?php
 		//open connector to billing class it will grab the users data if it exists.
-		$billing = new billing();
+		$billing = new billing(1351);
 		$userData = $billing->userArray();
 		$shippingData = $billing->shippingArray();
 		//removed the call for billing data because the form always has empty billing data. Billing data is empty so the user can easily use different billing info for different orders. Each successfull order gets the proper billing data attached as META during the order process
@@ -104,3 +104,11 @@ jQuery(document).ready(function($) {
 		Security Code<input type="text" name="ccCode"><br/><br/>
 		<input type="submit" name="doSignUp" value="Place Order">
 		</form>
+		
+<?php
+$serviceArray = $billing->serviceArray();
+echo '<pre>';
+print_r($serviceArray);
+echo '</pre>';
+echo '<br/><br/>';
+

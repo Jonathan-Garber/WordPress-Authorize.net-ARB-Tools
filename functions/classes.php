@@ -4,7 +4,11 @@ class billing {
 
 	public function __construct($postID = ''){
 		$this->postID = $postID;
+		//startDate is adjusted throughout the processes in this class so we cannot rely on it for capturing todays date everytime we use it
 		$this->startDate = date('Y-m-d');
+		
+		//dateToday never changes from todays actual date during the processes of this class.
+		$this->dateToday = date('Y-m-d');
 	
 		//API Settings
 		$this->apiLogin = get_option('apiLogin');
@@ -51,16 +55,92 @@ class billing {
 	}
 	
 	/*
-		Runs after submitted data and does a single charge/payment. this is NOT for ARB creation.
+		Cancels a subscription by its ID DEBUGGING FUNCTION
+	*/
+	public function debugCancelSubscription($subID){	
+		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
+		$xml->ARBCancelSubscriptionRequest(array(
+			'refId' => 'Debug Cancel',
+			'subscriptionId' => $subID
+		));
+	}
+	
+
+	/*
+		Runs after submitted order/payment data this is ONLY for processing initital payments on subscriptions that start at a later date. this only authorizes the amount. We capture after the subscription is successfully created.
 	*/
 	
-	
-	public function processPayment(){
-	
-		$preauth = $this->processPreAuth();
-		print_r($preauth);
-	
+	public function processInitialPayment(){
+		$this->invoiceNumber = 'IP-'.rand(1000000, 100000000).'-UID-'.$this->userID;
+		$this->refID = 'IP-UID-'.$this->userID;
+			
+		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
+		$xml->createTransactionRequest(array(
+			'refId' => $this->refID,
+			'transactionRequest' => array(
+				'transactionType' => 'authCaptureTransaction',
+				'amount' => $this->productAmount,
+				'payment' => array(
+					'creditCard' => array(
+						'cardNumber' => $this->ccNumber,
+						'expirationDate' => $this->ccMonth.$this->ccYear,
+						'cardCode' => $this->ccCode,
+					),
+				),
+				'order' => array(
+					'invoiceNumber' => $this->invoiceNumber,
+					'description' => 'Initial Payment for Recurring Billing',
+				),
+				'lineItems' => array(
+					'lineItem' => array(
+						0 => array(
+							'itemId' => '1',
+							'name' => $this->productName,
+							'description' => $this->productDescription,
+							'quantity' => '1',
+							'unitPrice' => $this->productAmount
+						)
+					)
+				),
+				'customer' => array(
+				   'id' => $this->userID,
+				   'email' => $this->billingEmail,
+				),
+				'billTo' => array(
+					'firstName' => $this->billingFirstName,
+					'lastName' => $this->billingLastName,
+					'company' => $this->billingCompany,
+					'address' => $this->billingAddress,
+					'city' => $this->billingCity,
+					'state' => $this->billingState,
+					'zip' => $this->billingZip,
+					'country' => $this->billingCountry,
+					'phoneNumber' => $this->billingPhoneNumber,
+				),
+				'shipTo' => array(
+					'firstName' => $this->shippingFirstName,
+					'lastName' => $this->shippingLastName,
+					'company' => $this->shippingCompany,
+					'address' => $this->shippingAddress,
+					'city' => $this->shippingCity,
+					'state' => $this->shippingState,
+					'zip' => $this->shippingZip,
+					'country' => $this->shippingCountry,
+				),
+				'customerIP' => $this->userIPAddress,
+			),
+		));
+
+		if ($xml->isSuccessful()){
+			$this->transID = $xml->transactionResponse->transId;
+			$this->startDate = strtotime(date("Y-m-d", strtotime($this->startDate)) . "+1 month");
+			$this->startDate = date('Y-m-d', $this->startDate);
+			$this->insertTransaction();
+		}else{
+			$this->errorMessage = 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText.'<br/>This Transaction has been VOIDED. No charges will occur.';
+		}	
 	}
+	
 	/*
 		Runs pre-auth and void on CC info for 0.01cent
 	*/	
@@ -106,6 +186,7 @@ class billing {
 
 		if ($xml->isSuccessful()){
 			$this->transID = $xml->transactionResponse->transId;
+			$this->insertTransaction();
 		}else{
 			$this->errorMessage = 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
 		}
@@ -124,6 +205,7 @@ class billing {
 		
 		if ($xml->isSuccessful()){
 			$this->voided = $xml->transactionResponse->responseCode;
+			$this->insertTransaction();
 		}else{
 			$this->errorMessage = 'Void Error: '.$xml->transactionResponse->errors->error->errorText;
 		}
@@ -133,7 +215,43 @@ class billing {
 	/*
 		Runs after submitted data and pre-auths/voids the card and creates ARB when successful
 	*/
-	public function processARB(){			
+	public function processARB(){
+	
+		/*
+			This is a dummy variable for future use to configure how ARB will do its billing based on user preference for start dates
+		*/
+		$this->billInitialPayment = 'on';
+		if ($this->billInitialPayment == 'on'){
+		
+			/*
+				We are taking the first payment for this subscription now and setting the start date to this same day one month from now to allow recurring billing to take over.
+			*/
+			$this->processInitialPayment();
+			
+			//Processing Initial Payment sets TransID upon success & the proper startDate into the variable
+			if ($this->transID != ''){
+				
+				//trans ID and new startDate are configured so we can continue with creating the subscription
+				$this->createSubscription();
+
+				//create subscription sets a subscription ID upon success				
+				if ( strlen($this->subscriptionID) > 4 ){
+					//we insert the initial subscription post and data here.
+					$this->insertSubscription();					
+					
+					//Since we billed them the initial payment already we are going to update their Subscription Meta to be ACTIVE & show payment number of 1 as well as the last date billing occurred and the next date billing is scheduled to occur on.
+					
+					update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', $this->dateToday);
+					update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
+					update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '1');
+					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'Active');				
+					
+					//send em to the thank you page
+					wp_redirect('/thank-you');
+				}
+			}
+			
+		}else{
 			$this->processPreAuth();
 			
 			//Preauth sets TransID upon success
@@ -145,12 +263,153 @@ class billing {
 					$this->createSubscription();
 					
 					//create subscription sets a subscription ID upon success
-					if ($this->subscriptionID){
+					//We use string length to be double sure we have a ID number by making sure the variable is numeric and longer then 4 digits minimal. This ensures we do not have some resultCode or error code by mistake in the variable
+					
+					if (is_numeric($this->subscriptionID) && strlen($this->subscriptionID) > 4){
 						//send em to the thank you page
+						$this->insertSubscription();
+						
 						wp_redirect('/thank-you');
 					}
 				}
 			}
+		}
+	}
+	
+	public function insertTransaction(){
+		//Notice the productDescription variable is used in this first step as the post Content the rest of the product information is added in the updateTransactionMeta function.
+		
+		$transaction = array(
+		  'post_title'    => $this->transID,
+		  'post_content' => $this->productDescription,
+		  'comment_status' => 'closed',
+		  'ping_status' => 'closed',
+		  'post_status'   => 'publish',
+		  'post_type' => 'auth-transactions',
+		  'post_author'   => $this->userID,
+		  'post_category' => array(0)
+		);
+		
+		$transactionID = wp_insert_post($transaction);
+		
+		//set the transaction post ID this instance is working with into a variable
+		$this->transactionPostID = $transactionID;
+		
+		//update this new transaction post with any and all data we feel is needed
+		$this->updateTransactionMeta();		
+	
+	}
+	
+	public function updateTransactionMeta(){
+		//inserts billing data for transaction
+		update_post_meta($this->transactionPostID, 'billingFirstName', $this->billingFirstName);
+		update_post_meta($this->transactionPostID, 'billingLastName', $this->billingLastName);
+		update_post_meta($this->transactionPostID, 'billingEmail', $this->billingEmail);
+		update_post_meta($this->transactionPostID, 'billingCompany', $this->billingCompany);
+		update_post_meta($this->transactionPostID, 'billingPhoneNumber', $this->billingPhoneNumber);
+		update_post_meta($this->transactionPostID, 'billingAddress', $this->billingAddress);
+		update_post_meta($this->transactionPostID, 'billingCity', $this->billingCity);
+		update_post_meta($this->transactionPostID, 'billingState', $this->billingState);
+		update_post_meta($this->transactionPostID, 'billingZip', $this->billingZip);
+		update_post_meta($this->transactionPostID, 'billingCountry', $this->billingCountry);
+	
+		//inserts shipping data for transaction
+		update_post_meta($this->transactionPostID, 'shippingFirstName', $this->shippingFirstName);
+		update_post_meta($this->transactionPostID, 'shippingLastName', $this->shippingLastName);
+		update_post_meta($this->transactionPostID, 'shippingCompany', $this->shippingCompany);
+		update_post_meta($this->transactionPostID, 'shippingEmail', $this->shippingEmail);
+		update_post_meta($this->transactionPostID, 'shippingPhoneNumber', $this->shippingPhoneNumber);
+		update_post_meta($this->transactionPostID, 'shippingAddress', $this->shippingAddress);
+		update_post_meta($this->transactionPostID, 'shippingCity', $this->shippingCity);
+		update_post_meta($this->transactionPostID, 'shippingState', $this->shippingState);
+		update_post_meta($this->transactionPostID, 'shippingZip', $this->shippingZip);
+		update_post_meta($this->transactionPostID, 'shippingCountry', $this->shippingCountry);
+		
+		//inserts payment data for transaction
+		update_post_meta($this->transactionPostID, 'ccLastFour', $this->lastFour);
+		update_post_meta($this->transactionPostID, 'ccMonth', $this->ccMonth);
+		update_post_meta($this->transactionPostID, 'ccYear', $this->ccYear);
+
+		//inserts transaction data
+		update_post_meta($this->transactionPostID, 'transactionDate', $this->dateToday);
+		update_post_meta($this->transactionPostID, 'transactionReferenceID', $this->refID);
+		update_post_meta($this->transactionPostID, 'transactionInvoiceNumber', $this->invoiceNumber);
+		
+	
+	}
+	
+	
+	public function insertSubscription(){
+		//Notice the productDescription variable is used in this first step as the post Content the rest of the product information is added in the updateSubscriptionMeta function.
+		
+		$subscription = array(
+		  'post_title'    => $this->subscriptionID,
+		  'post_content' => $this->productDescription,
+		  'comment_status' => 'closed',
+		  'ping_status' => 'closed',
+		  'post_status'   => 'publish',
+		  'post_type' => 'auth-subscriptions',
+		  'post_author'   => $this->userID,
+		  'post_category' => array(0)
+		);
+		
+		$subscriptionPostID = wp_insert_post($subscription);
+		
+		//set the subscription post ID this instance is working with into a variable
+		$this->subscriptionPostID = $subscriptionPostID;
+		
+		//update this new subscription post with any and all data we feel is needed
+		$this->updateSubscriptionMeta();		
+	}
+	
+	public function updateSubscriptionMeta(){
+	
+		//inserts billing data for subscription
+		update_post_meta($this->subscriptionPostID, 'billingFirstName', $this->billingFirstName);
+		update_post_meta($this->subscriptionPostID, 'billingLastName', $this->billingLastName);
+		update_post_meta($this->subscriptionPostID, 'billingEmail', $this->billingEmail);
+		update_post_meta($this->subscriptionPostID, 'billingCompany', $this->billingCompany);
+		update_post_meta($this->subscriptionPostID, 'billingPhoneNumber', $this->billingPhoneNumber);
+		update_post_meta($this->subscriptionPostID, 'billingAddress', $this->billingAddress);
+		update_post_meta($this->subscriptionPostID, 'billingCity', $this->billingCity);
+		update_post_meta($this->subscriptionPostID, 'billingState', $this->billingState);
+		update_post_meta($this->subscriptionPostID, 'billingZip', $this->billingZip);
+		update_post_meta($this->subscriptionPostID, 'billingCountry', $this->billingCountry);
+	
+		//inserts shipping data for subscription
+		update_post_meta($this->subscriptionPostID, 'shippingFirstName', $this->shippingFirstName);
+		update_post_meta($this->subscriptionPostID, 'shippingLastName', $this->shippingLastName);
+		update_post_meta($this->subscriptionPostID, 'shippingCompany', $this->shippingCompany);
+		update_post_meta($this->subscriptionPostID, 'shippingEmail', $this->shippingEmail);
+		update_post_meta($this->subscriptionPostID, 'shippingPhoneNumber', $this->shippingPhoneNumber);
+		update_post_meta($this->subscriptionPostID, 'shippingAddress', $this->shippingAddress);
+		update_post_meta($this->subscriptionPostID, 'shippingCity', $this->shippingCity);
+		update_post_meta($this->subscriptionPostID, 'shippingState', $this->shippingState);
+		update_post_meta($this->subscriptionPostID, 'shippingZip', $this->shippingZip);
+		update_post_meta($this->subscriptionPostID, 'shippingCountry', $this->shippingCountry);
+		
+		//inserts payment data for subscription
+		update_post_meta($this->subscriptionPostID, 'ccLastFour', $this->lastFour);
+		update_post_meta($this->subscriptionPostID, 'ccMonth', $this->ccMonth);
+		update_post_meta($this->subscriptionPostID, 'ccYear', $this->ccYear);
+		
+		//insert Subscription information		
+		update_post_meta($this->subscriptionPostID, 'subscriptionStartDate', $this->startDate);
+		update_post_meta($this->subscriptionPostID, 'subscriptionReferenceID', $this->refID);
+		update_post_meta($this->subscriptionPostID, 'subscriptionInvoiceNumber', $this->invoiceNumber);
+		update_post_meta($this->subscriptionPostID, 'subscriptionName', $this->productName);
+		update_post_meta($this->subscriptionPostID, 'subscriptionInterval', $this->productInterval);
+		update_post_meta($this->subscriptionPostID, 'subscriptionUnit', $this->productUnit);
+		update_post_meta($this->subscriptionPostID, 'subscriptionOccurrences', $this->productOccurrences);
+		update_post_meta($this->subscriptionPostID, 'subscriptionTrialOccurrences', $this->productTrialOccurrences);
+		update_post_meta($this->subscriptionPostID, 'subscriptionAmount', $this->productAmount);
+		update_post_meta($this->subscriptionPostID, 'subscriptionTrialAmount', $this->productTrialAmount);
+		
+		//These variables are updated during Silent Post Captures
+		update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', '0');
+		update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
+		update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '0');
+		update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'Awaiting Start Date');
 	}
 	
 	public function createSubscription(){
@@ -212,11 +471,15 @@ class billing {
 		));
 		
 		if ($xml->isSuccessful()){
-			$this->subscriptionID = $xml->messages->resultCode;
+			$this->subscriptionID = $xml->subscriptionId;
 		}else{
 			$this->errorMessage = 'Subscription Error: '.$xml->messages->message->text;
+			
+			if ($this->billInitialPayment == 'on'){
+				//We already billed for this subscription but it failed to create. We now need to void the billing charge.
+				$this->voidTransaction();
+			}
 		}		
-		
 	}
 	
 	
@@ -300,6 +563,7 @@ class billing {
 		}
 		
 		printf('
+			<h2>Api Settings</h2>
 			<form method="POST">
 			API Login ID: <input type="text" name="apiLogin" value="%s"><br/>
 			API Transaction Key: <input type="text" name="apiKey" value="%s"><br/>
@@ -412,7 +676,7 @@ class billing {
 		$array['shippingCountry'] = $this->shippingCountry;
 		
 		return $array;
-	}			
+	}
 	
 	public function monthSelect($fieldName){
 		echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
@@ -681,6 +945,107 @@ class billing {
 			
 		}
 		echo '</select>';
+	}
+	
+	/*
+		Returns an array of customer data from the subscription POST passed into it. Easy to use for displaying data on pages.
+	*/
+	
+	public function subscriptionCustomerData(){
+	
+		$array = array();
+		
+		//inserts billing data for subscription
+		$array[billingFirstName] = get_post_meta($this->postID, 'billingFirstName', true);		
+		$array[billingLastName] = get_post_meta($this->postID, 'billingLastName', true);
+		$array[billingEmail] = get_post_meta($this->postID, 'billingEmail', true);
+		$array[billingCompany] = get_post_meta($this->postID, 'billingCompany', true);
+		$array[billingPhoneNumber] = get_post_meta($this->postID, 'billingPhoneNumber', true);
+		$array[billingAddress] = get_post_meta($this->postID, 'billingAddress', true);
+		$array[billingCity] = get_post_meta($this->postID, 'billingCity', true);
+		$array[billingState] = get_post_meta($this->postID, 'billingState', true);
+		$array[billingZip] = get_post_meta($this->postID, 'billingZip', true);
+		$array[billingCountry] = get_post_meta($this->postID, 'billingCountry', true);
+	
+		//inserts shipping data for subscription
+		$array[shippingFirstName] = get_post_meta($this->postID, 'shippingFirstName', true);
+		$array[shippingLastName] = get_post_meta($this->postID, 'shippingLastName', true);
+		$array[shippingCompany] = get_post_meta($this->postID, 'shippingCompany', true);
+		$array[shippingEmail] = get_post_meta($this->postID, 'shippingEmail', true);
+		$array[shippingPhoneNumber] = get_post_meta($this->postID, 'shippingPhoneNumber', true);
+		$array[shippingAddress] = get_post_meta($this->postID, 'shippingAddress', true);
+		$array[shippingCity] = get_post_meta($this->postID, 'shippingCity', true);
+		$array[shippingState] = get_post_meta($this->postID, 'shippingState', true);
+		$array[shippingZip] = get_post_meta($this->postID, 'shippingZip', true);
+		$array[shippingCountry] = get_post_meta($this->postID, 'shippingCountry', true);
+		
+		//inserts payment data for subscription
+		$array[ccLastFour] = get_post_meta($this->postID, 'ccLastFour', true);
+		$array[ccMonth] = get_post_meta($this->postID, 'ccMonth', true);
+		$array[ccYear] = get_post_meta($this->postID, 'ccYear', true);
+		
+		//insert Subscription information		
+		$array[subscriptionStartDate] = get_post_meta($this->postID, 'subscriptionStartDate', true);
+		$array[subscriptionReferenceID] = get_post_meta($this->postID, 'subscriptionReferenceID', true);
+		$array[subscriptionInvoiceNumber] = get_post_meta($this->postID, 'subscriptionInvoiceNumber', true);
+		$array[subscriptionName] = get_post_meta($this->postID, 'subscriptionName', true);
+		$array[subscriptionInterval] = get_post_meta($this->postID, 'subscriptionInterval', true);
+		$array[subscriptionUnit] = get_post_meta($this->postID, 'subscriptionUnit', true);
+		$array[subscriptionOccurrences] = get_post_meta($this->postID, 'subscriptionOccurrences', true);
+		$array[subscriptionTrialOccurrences] = get_post_meta($this->postID, 'subscriptionTrialOccurrences', true);
+		$array[subscriptionAmount] = get_post_meta($this->postID, 'subscriptionAmount', true);
+		$array[subscriptionTrialAmount] = get_post_meta($this->postID, 'subscriptionTrialAmount', true);
+		
+		//These variables are updated during Silent Post Captures
+		$array[subscriptionLastBillingDate] = get_post_meta($this->postID, 'subscriptionLastBillingDate', true);
+		$array[subscriptionNextBillingDate] = get_post_meta($this->postID, 'subscriptionNextBillingDate', true);
+		$array[subscriptionPaymentNumber] = get_post_meta($this->postID, 'subscriptionPaymentNumber', true);
+		$array[subscriptionStatus] = get_post_meta($this->postID, 'subscriptionStatus', true);
+		
+		return $array;
+	}
+	
+	public function transactionCustomerData(){
+	
+		$array = array();
+		
+		//inserts billing data for subscription
+		$array[billingFirstName] = get_post_meta($this->postID, 'billingFirstName', true);		
+		$array[billingLastName] = get_post_meta($this->postID, 'billingLastName', true);
+		$array[billingEmail] = get_post_meta($this->postID, 'billingEmail', true);
+		$array[billingCompany] = get_post_meta($this->postID, 'billingCompany', true);
+		$array[billingPhoneNumber] = get_post_meta($this->postID, 'billingPhoneNumber', true);
+		$array[billingAddress] = get_post_meta($this->postID, 'billingAddress', true);
+		$array[billingCity] = get_post_meta($this->postID, 'billingCity', true);
+		$array[billingState] = get_post_meta($this->postID, 'billingState', true);
+		$array[billingZip] = get_post_meta($this->postID, 'billingZip', true);
+		$array[billingCountry] = get_post_meta($this->postID, 'billingCountry', true);
+	
+		//inserts shipping data for subscription
+		$array[shippingFirstName] = get_post_meta($this->postID, 'shippingFirstName', true);
+		$array[shippingLastName] = get_post_meta($this->postID, 'shippingLastName', true);
+		$array[shippingCompany] = get_post_meta($this->postID, 'shippingCompany', true);
+		$array[shippingEmail] = get_post_meta($this->postID, 'shippingEmail', true);
+		$array[shippingPhoneNumber] = get_post_meta($this->postID, 'shippingPhoneNumber', true);
+		$array[shippingAddress] = get_post_meta($this->postID, 'shippingAddress', true);
+		$array[shippingCity] = get_post_meta($this->postID, 'shippingCity', true);
+		$array[shippingState] = get_post_meta($this->postID, 'shippingState', true);
+		$array[shippingZip] = get_post_meta($this->postID, 'shippingZip', true);
+		$array[shippingCountry] = get_post_meta($this->postID, 'shippingCountry', true);
+		
+		//inserts payment data for subscription
+		$array[ccLastFour] = get_post_meta($this->postID, 'ccLastFour', true);
+		$array[ccMonth] = get_post_meta($this->postID, 'ccMonth', true);
+		$array[ccYear] = get_post_meta($this->postID, 'ccYear', true);
+		
+		
+		//These variables are updated during Silent Post Captures
+		$array[transactionDate] = get_post_meta($this->postID, 'transactionDate', true);
+		$array[transactionInvoiceNumber] = get_post_meta($this->postID, 'transactionInvoiceNumber', true);
+		$array[transactionReferenceID] = get_post_meta($this->postID, 'transactionReferenceID', true);
+		
+		return $array;	
+	
 	}
 	
 }
