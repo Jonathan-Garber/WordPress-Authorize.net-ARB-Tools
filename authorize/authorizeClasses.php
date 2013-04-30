@@ -44,11 +44,13 @@ class AuthnetXML
     private $transkey;
     private $url;
     private $xml;
+	private $apiTestMode;
 
 	public function __construct($login, $transkey, $test)
 	{
 		$login    = trim($login);
         $transkey = trim($transkey);
+
         if (empty($login) || empty($transkey))
         {
             trigger_error('You have not configured your ' . __CLASS__ . '() login credentials properly.', E_USER_WARNING);
@@ -56,13 +58,15 @@ class AuthnetXML
 
         $this->login    = trim($login);
         $this->transkey = trim($transkey);
+		$this->apiTestMode = $test;
         
-		if ($test == 'on'){
+		if ($this->apiTestMode == 'on'){
 			$subdomain = 'apitest';
 		}else{
 			$subdomain = 'api';
 		}
         $this->url = 'https://' . $subdomain . '.authorize.net/xml/v1/request.api';
+		
 	}
 
     /**
@@ -197,9 +201,12 @@ class AuthnetXML
     	curl_setopt($this->ch, CURLOPT_HEADER, 0);
     	curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->xml);
     	curl_setopt($this->ch, CURLOPT_POST, 1);
-    	curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 2);
-    	curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '/ssl/cert.pem');
-
+    	
+		if ($this->apiTestMode == ''){
+			curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 2);
+			curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '/ssl/cert.pem');
+		}
+		
         if(($this->response = curl_exec($this->ch)) !== false)
         {
             $this->response_xml = @new SimpleXMLElement($this->response);

@@ -4,6 +4,7 @@ class billing {
 
 	public function __construct($postID = ''){
 		$this->postID = $postID;
+		$this->startDate = date('Y-m-d');
 	
 		//API Settings
 		$this->apiLogin = get_option('apiLogin');
@@ -41,11 +42,12 @@ class billing {
 		$this->shippingLastName = get_user_meta($this->userID, 'shippingLastName', true);
 		$this->shippingEmail = get_user_meta($this->userID, 'shippingEmail', true);
 		$this->shippingCompany = get_user_meta($this->userID, 'shippingCompany', true);
+		$this->shippingPhoneNumber = get_user_meta($this->userID, 'shippingPhoneNumber', true);
 		$this->shippingAddress = get_user_meta($this->userID, 'shippingAddress', true);
 		$this->shippingCity = get_user_meta($this->userID, 'shippingCity', true);
 		$this->shippingState = get_user_meta($this->userID, 'shippingState', true);
 		$this->shippingZip = get_user_meta($this->userID, 'shippingZip', true);
-		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);		
+		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);
 	}
 	
 	/*
@@ -56,6 +58,7 @@ class billing {
 	public function processPayment(){
 	
 		$preauth = $this->processPreAuth();
+		print_r($preauth);
 	
 	}
 	/*
@@ -64,13 +67,13 @@ class billing {
 	public function processPreAuth(){	
 		$this->invoiceNumber = 'PA-'.rand(1000000, 100000000).'-UID-'.$this->userID;
 		$this->refID = 'PA-UID-'.$this->userID;
-		
+			
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
 			'transactionRequest' => array(
 				'transactionType' => 'authOnlyTransaction',
-				'amount' => $this->productAmount,
+				'amount' => '0.01',
 				'payment' => array(
 					'creditCard' => array(
 						'cardNumber' => $this->ccNumber,
@@ -87,102 +90,133 @@ class billing {
 				   'email' => $this->billingEmail,
 				),
 				'billTo' => array(
-				   'firstName' => $this->billingFirstName,
-				   'lastName' => $this->billingLastName,
-				   'company' => $this->billingCompany,
-				   'address' => $this->billingAddress,
-				   'city' => $this->billingCity,
-				   'state' => $this->billingState,
-				   'zip' => $this->billingZip,
-				   'country' => $this->billingCountry,
+					'firstName' => $this->billingFirstName,
+					'lastName' => $this->billingLastName,
+					'company' => $this->billingCompany,
+					'address' => $this->billingAddress,
+					'city' => $this->billingCity,
+					'state' => $this->billingState,
+					'zip' => $this->billingZip,
+					'country' => $this->billingCountry,
+					'phoneNumber' => $this->billingPhoneNumber,
 				),
 				'customerIP' => $this->userIPAddress,
 			),
 		));
+
+		if ($xml->isSuccessful()){
+			$this->transID = $xml->transactionResponse->transId;
+		}else{
+			$this->errorMessage = 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
+		}
+	}
+	
+	public function voidTransaction(){
+		$this->refID = 'VOID-UID-'.$this->userID;
+		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
+		$xml->createTransactionRequest(array(
+			'refId' => $this->refID,
+			'transactionRequest' => array(
+				'transactionType' => 'voidTransaction',
+				'refTransId' => $this->transID,
+			),
+		));
 		
-		$response = $xml->messages->resultCode;
+		if ($xml->isSuccessful()){
+			$this->voided = $xml->transactionResponse->responseCode;
+		}else{
+			$this->errorMessage = 'Void Error: '.$xml->transactionResponse->errors->error->errorText;
+		}
 		
 	}
 	
 	/*
 		Runs after submitted data and pre-auths/voids the card and creates ARB when successful
 	*/
-	public function processARB(){
-		
+	public function processARB(){			
+			$this->processPreAuth();
+			
+			//Preauth sets TransID upon success
+			if ($this->transID != ''){
+				$this->voidTransaction();
+				
+				//voiding sets the voided variable to 1 upon success
+				if ($this->voided == '1'){
+					$this->createSubscription();
+					
+					//create subscription sets a subscription ID upon success
+					if ($this->subscriptionID){
+						//send em to the thank you page
+						wp_redirect('/thank-you');
+					}
+				}
+			}
 	}
 	
-	/*
-		Processing submitted post data for single or arb payments.
-	*/
-	public function processBilling($_POST){
-		//Shipping Information
-		$this->shippingFirstName = $_POST['shippingFirstName'];
-		$this->shippingLastName = $_POST['shippingLastName'];
-		$this->shippingEmail = $_POST['shippingEmail'];
-		$this->shippingPhoneNumber = $_POST['shippingPhoneNumber'];
-		$this->shippingAddress = $_POST['shippingAddress'];
-		$this->shippingCity = $_POST['shippingCity'];
-		$this->shippingState = $_POST['shippingState'];
-		$this->shippingZip = $_POST['shippingZip'];
-		$this->shippingCountry = $_POST['shippingCountry'];
-
-		//Billing Information
-		$this->billingFirstName = $_POST['billingFirstName'];
-		$this->billingLastName = $_POST['billingLastName'];
-		$this->billingEmail = $_POST['billingEmail'];
-		$this->billingPhoneNumber = $_POST['billingPhoneNumber'];
-		$this->billingAddress = $_POST['billingAddress'];
-		$this->billingCity = $_POST['billingCity'];
-		$this->billingState = $_POST['billingState'];
-		$this->billingZip = $_POST['billingZip'];
-		$this->billingCountry = $_POST['billingCountry'];
+	public function createSubscription(){
+		$this->refID = 'SUB-UID-'.$this->userID;
+		$this->invoiceNumber = 'SUB-'.rand(1000000, 100000000).'-UID-'.$this->userID;
 		
-		//CC info		
-		$this->ccNumber = $_POST['ccNumber'];		
-		$this->ccMonth = $_POST['ccMonth'];
-		$this->ccYear = $_POST['ccYear'];
-		$this->ccCode = $_POST['ccCode'];
-		$this->lastFour = substr($this->ccNumber, -4);
+		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
+		$xml->ARBCreateSubscriptionRequest(array(
+			'refId' => $this->refID,
+			'subscription' => array(
+				'name' => $this->productName,
+				'paymentSchedule' => array(
+					'interval' => array(
+						'length' => $this->productInterval,
+						'unit' => $this->productUnit
+					),
+					'startDate' => $this->startDate,
+					'totalOccurrences' => $this->productOccurrences,
+					'trialOccurrences' => $this->productTrialOccurrences
+				),
+				'amount' => $this->productAmount,
+				'trialAmount' => $this->productTrialAmount,
+				'payment' => array(
+					'creditCard' => array(
+						'cardNumber' => $this->ccNumber,
+						'expirationDate' => $this->ccYear.'-'.$this->ccMonth
+					)
+				),
+				'order' => array(
+					'invoiceNumber' => $this->invoiceNumber,
+					'description' => $this->productDescription,
+				),
+				'customer' => array(
+					'id' => $this->userID,
+					'email' => $this->billingEmail,
+					'phoneNumber' => $this->billingPhoneNumber,
+				),
+				'billTo' => array(
+					'firstName' => $this->billingFirstName,
+					'lastName' => $this->billingLastName,
+					'company' => $this->billingCompany,
+					'address' => $this->billingAddress,
+					'city' => $this->billingCity,
+					'state' => $this->billingState,
+					'zip' => $this->billingZip,
+					'country' => $this->billingCountry,
+				),
+				'shipTo' => array(
+					'firstName' => $this->shippingFirstName,
+					'lastName' => $this->shippingLastName,
+					'company' => $this->shippingCompany,
+					'address' => $this->shippingAddress,
+					'city' => $this->shippingCity,
+					'state' => $this->shippingState,
+					'zip' => $this->shippingZip,
+					'country' => $this->shippingCountry,
+				)
+			)		
+		));
 		
-		//product or service information		
-		$this->productName = $_POST['productName'];
-		$this->productDescription = $_POST['productDescription'];
-		$this->productAmount = $_POST['productAmount'];
-		$this->productOccurrences = $_POST['productOccurrences'];		
+		if ($xml->isSuccessful()){
+			$this->subscriptionID = $xml->messages->resultCode;
+		}else{
+			$this->errorMessage = 'Subscription Error: '.$xml->messages->message->text;
+		}		
 		
-		//is this a subscription or single payment?		
-		if ($occurrences > 1){
-			$this->transactionType = 'single';
-			$this->productUnit = $_POST['productUnit'];
-			$this->productInterval = $_POST['productInterval'];
-			$this->productTrial = $_POST['productTrial'];
-			
-			//is there a trial period
-				if ($this->productTrial == 'yes'){
-					$this->productTrialOccurrences = $_POST['productTrialOccurrences'];
-					$this->productTrialAmount = $_POST['productTrialAmount'];				
-				}
-			
-		}
-		
-		//user is not logged in if ID is 0
-		if ($this->userID == 0){
-			$createUser = $this->createUser();
-			
-			if ($createUser == 'registered'){
-				//the user was successfully registered continue with transaction
-				if ($this->transactionType == 'single'){
-					$this->processPayment();
-				}else{
-					$this->processARB();
-				}
-			}else{
-				//is an error during creation so we set the output to an error variable to be used on screen
-				$error = $createUser;
-				return $error;
-			}
-				
-		}
 	}
 	
 	
@@ -205,20 +239,33 @@ class billing {
 		if (is_numeric($userID)){
 			$this->userID = $userID;
 			$this->setUserData();
-			$status = 'registered';
-			
+			//log in the successfully created user...
+			$this->loginUser();			
 		}else{
-			$status = $userID->get_error_message();
+			$this->errorMessage = $userID->get_error_message();
 		}
-		return $status;
 	}
 	
+	public function loginUser(){
+		wp_set_current_user($this->userID, $this->userEmail);
+        wp_set_auth_cookie($this->userID);
+        do_action('wp_login', $this->userEmail);
+	}	
+	
 	public function setUserData(){
+	
+		//User Data
+		update_user_meta($this->userID, 'userCompany', $this->userCompany);
+		update_user_meta($this->userID, 'userPhoneNumber', $this->userPhoneNumber);
+		update_user_meta($this->userID, 'userIPAddress', $this->userIPAddress);
+	
 		//inserts billing data to user meta
 		update_user_meta($this->userID, 'billingFirstName', $this->billingFirstName);
 		update_user_meta($this->userID, 'billingLastName', $this->billingLastName);
 		update_user_meta($this->userID, 'billingEmail', $this->billingEmail);
+		update_user_meta($this->userID, 'billingCompany', $this->billingCompany);
 		update_user_meta($this->userID, 'billingPhoneNumber', $this->billingPhoneNumber);
+		update_user_meta($this->userID, 'billingAddress', $this->billingAddress);
 		update_user_meta($this->userID, 'billingCity', $this->billingCity);
 		update_user_meta($this->userID, 'billingState', $this->billingState);
 		update_user_meta($this->userID, 'billingZip', $this->billingZip);
@@ -227,8 +274,10 @@ class billing {
 		//inserts shipping data to user meta
 		update_user_meta($this->userID, 'shippingFirstName', $this->shippingFirstName);
 		update_user_meta($this->userID, 'shippingLastName', $this->shippingLastName);
+		update_user_meta($this->userID, 'shippingCompany', $this->shippingCompany);
 		update_user_meta($this->userID, 'shippingEmail', $this->shippingEmail);
 		update_user_meta($this->userID, 'shippingPhoneNumber', $this->shippingPhoneNumber);
+		update_user_meta($this->userID, 'shippingAddress', $this->shippingAddress);
 		update_user_meta($this->userID, 'shippingCity', $this->shippingCity);
 		update_user_meta($this->userID, 'shippingState', $this->shippingState);
 		update_user_meta($this->userID, 'shippingZip', $this->shippingZip);
@@ -331,24 +380,6 @@ class billing {
 		return $array;
 	}
 	
-	public function billingArray(){		
-		//set us up the array		
-		$array = array();
-
-		//billing
-		$array['billingFirstName'] = $this->billingFirstName;
-		$array['billingLastName'] = $this->billingLastName;
-		$array['billingCompany'] = $this->billingCompany;		
-		$array['billingEmail'] = $this->billingEmail;
-		$array['billingAddress'] = $this->billingAddress;
-		$array['billingCity'] = $this->billingCity;
-		$array['billingState'] = $this->billingState;
-		$array['billingZip'] = $this->billingZip;
-		$array['billingCountry'] = $this->billingCountry;	
-		
-		return $array;
-	}
-	
 	public function userArray(){
 		
 		$array = array();
@@ -373,12 +404,13 @@ class billing {
 		$array['shippingLastName'] = $this->shippingLastName;
 		$array['shippingCompany'] = $this->shippingCompany;
 		$array['shippingEmail'] = $this->shippingEmail;
+		$array['shippingPhoneNumber'] = $this->shippingPhoneNumber;
 		$array['shippingAddress'] = $this->shippingAddress;
 		$array['shippingCity'] = $this->shippingCity;
 		$array['shippingState'] = $this->shippingState;
 		$array['shippingZip'] = $this->shippingZip;
 		$array['shippingCountry'] = $this->shippingCountry;
-
+		
 		return $array;
 	}			
 	
@@ -397,7 +429,7 @@ class billing {
 		echo '</select>';
 	}
 	
-	public function countrySelect($fieldName){
+	public function countrySelect($fieldName, $selected = ''){
 	$countries = array(
 		  "GB" => "United Kingdom",
 		  "US" => "United States",
@@ -642,7 +674,11 @@ class billing {
 		
 		echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
 		foreach ($countries as $value => $option){
+			if ($selected == $value){
+				echo '<option selected="selected" value="'.$value.'">'.$option.'</option>';
+			}
 			echo '<option value="'.$value.'">'.$option.'</option>';
+			
 		}
 		echo '</select>';
 	}

@@ -1,5 +1,4 @@
 <?php
-
 /*
 
 	Plugin Name: Authorize.net Subscription Management	
@@ -13,6 +12,39 @@ Requires
 */
 require_once('authorize/authorizeClasses.php');
 require_once('functions/classes.php');
+
+/*
+	Create required pages in backend
+*/
+register_activation_hook( __FILE__, 'registerPages' );
+
+function registerPages(){
+$thankYouPage = array(
+  'post_title'    => 'Thank You',
+  'comment_status' => 'closed',
+  'ping_status' => 'closed',
+  'post_status'   => 'publish',
+  'post_type' => 'page',
+  'post_author'   => 1,
+  'post_category' => array(0)
+);
+
+$processPage = array(
+  'post_title'    => 'Processing Order',
+  'comment_status' => 'closed',
+  'ping_status' => 'closed',
+  'post_status'   => 'publish',
+  'post_type' => 'page',
+  'post_author'   => 1,
+  'post_category' => array(0)
+);
+
+// Insert the post into the database
+wp_insert_post( $thankYouPage );
+wp_insert_post( $processPage );
+
+
+}
 
 /*
 	Custom Template for displaying products/order form etc.
