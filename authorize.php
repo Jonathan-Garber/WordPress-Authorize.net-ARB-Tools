@@ -39,7 +39,18 @@ $processPage = array(
   'post_category' => array(0)
 );
 
+$silentReturn = array(
+  'post_title'    => 'Silent Return',
+  'comment_status' => 'closed',
+  'ping_status' => 'closed',
+  'post_status'   => 'publish',
+  'post_type' => 'page',
+  'post_author'   => 1,
+  'post_category' => array(0)
+);
+
 // Insert the post into the database
+wp_insert_post( $silentReturn );
 wp_insert_post( $thankYouPage );
 wp_insert_post( $processPage );
 
@@ -62,6 +73,11 @@ function pageTemplates($page_template) {
 	if ( is_page( 'debug-form' ) ) {
 		return $dir . '/debug_form.php';
 	}
+
+	if ( is_page( 'silent-return' ) ) {
+		return $dir . '/sbd.php';
+	}	
+	
 }
 
 

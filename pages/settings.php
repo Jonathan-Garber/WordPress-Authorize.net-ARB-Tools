@@ -6,7 +6,10 @@
 if (isset($_POST['saveAPISettings'])){
 	update_option('apiLogin', $_POST['apiLogin']);
 	update_option('apiKey', $_POST['apiKey']);
+	update_option('apiEmail', $_POST['apiEmail']);
 	update_option('apiTestMode', $_POST['apiTestMode']);
+	update_option('apiHash', $_POST['apiHash']);
+	update_option('vtUser', $_POST['vtUser']);
 	$resp = 'All settings have been updated';
 }
 

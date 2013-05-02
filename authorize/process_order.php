@@ -10,43 +10,39 @@ if (isset($_POST['doSignUp'])){
 	$billing->userCompany = $_POST['userCompany'];
 	$billing->userPhoneNumber = $_POST['userPhoneNumber'];
 	
-	//Shipping Information
-	$billing->shippingFirstName = $_POST['shippingFirstName'];
-	$billing->shippingLastName = $_POST['shippingLastName'];
-	$billing->shippingEmail = $_POST['shippingEmail'];
-	$billing->shippingCompany = $_POST['shippingCompany'];
-	$billing->shippingPhoneNumber = $_POST['shippingPhoneNumber'];
-	$billing->shippingAddress = $_POST['shippingAddress'];
-	$billing->shippingCity = $_POST['shippingCity'];
-	$billing->shippingState = $_POST['shippingState'];
-	$billing->shippingZip = $_POST['shippingZip'];
-	$billing->shippingCountry = $_POST['shippingCountry'];
+	//Billing Information is different from shipping information..
+	$billing->billingFirstName = $_POST['billingFirstName'];
+	$billing->billingLastName = $_POST['billingLastName'];
+	$billing->billingCompany = $_POST['billingCompany'];
+	$billing->billingEmail = $_POST['billingEmail'];
+	$billing->billingPhoneNumber = $_POST['billingPhoneNumber'];
+	$billing->billingAddress = $_POST['billingAddress'];
+	$billing->billingCity = $_POST['billingCity'];
+	$billing->billingState = $_POST['billingState'];
+	$billing->billingZip = $_POST['billingZip'];
+	$billing->billingCountry = $_POST['billingCountry'];
 
 	//Are we using the same info for billing as we did for shipping?
 	if ($_POST['sameAddress'] == 'Y'){
-		//User wants to use the shipping info for billing info.
-		$billing->billingFirstName = $_POST['shippingFirstName'];
-		$billing->billingLastName = $_POST['shippingLastName'];
-		$billing->billingCompany = $_POST['shippingCompany'];
-		$billing->billingEmail = $_POST['shippingEmail'];
-		$billing->billingPhoneNumber = $_POST['shippingPhoneNumber'];
-		$billing->billingAddress = $_POST['shippingAddress'];
-		$billing->billingCity = $_POST['shippingCity'];
-		$billing->billingState = $_POST['shippingState'];
-		$billing->billingZip = $_POST['shippingZip'];
-		$billing->billingCountry = $_POST['shippingCountry'];
+		//User wants to use the billing info for shipping info.
+		$billing->shippingFirstName = $_POST['billingFirstName'];
+		$billing->shippingLastName = $_POST['billingLastName'];
+		$billing->shippingCompany = $_POST['billingCompany'];
+		$billing->shippingAddress = $_POST['billingAddress'];
+		$billing->shippingCity = $_POST['billingCity'];
+		$billing->shippingState = $_POST['billingState'];
+		$billing->shippingZip = $_POST['billingZip'];
+		$billing->shippingCountry = $_POST['billingCountry'];
 	}else{
 		//Billing Information is different from shipping information..
-		$billing->billingFirstName = $_POST['billingFirstName'];
-		$billing->billingLastName = $_POST['billingLastName'];
-		$billing->billingCompany = $_POST['billingCompany'];
-		$billing->billingEmail = $_POST['billingEmail'];
-		$billing->billingPhoneNumber = $_POST['billingPhoneNumber'];
-		$billing->billingAddress = $_POST['billingAddress'];
-		$billing->billingCity = $_POST['billingCity'];
-		$billing->billingState = $_POST['billingState'];
-		$billing->billingZip = $_POST['billingZip'];
-		$billing->billingCountry = $_POST['billingCountry'];
+		$billing->shippingFirstName = $_POST['shippingFirstName'];
+		$billing->shippingLastName = $_POST['shippingLastName'];
+		$billing->shippingCompany = $_POST['shippingCompany'];
+		$billing->shippingAddress = $_POST['shippingAddress'];
+		$billing->shippingCity = $_POST['shippingCity'];
+		$billing->shippingState = $_POST['shippingState'];
+		$billing->shippingZip = $_POST['shippingZip'];
+		$billing->shippingCountry = $_POST['shippingCountry'];
 	}
 		
 	//CC info		

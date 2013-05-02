@@ -1,9 +1,12 @@
 <?php
-
-if (isset($_POST['manualCancel'])){
+if (isset($_POST['cancelSubscription'])){
 	$subID = $_POST['subID'];
+	$reason = $_POST['cancelReason'];
+
 	$billing = new billing();
-	$billing->debugCancelSubscription($subID);
+	$billing->adminCancelSubscription();
+	
+	
 }
 
 $subsArray = array(
@@ -14,7 +17,10 @@ $subscriptions = get_posts($subsArray);
 
 foreach ($subscriptions as $s){
 $postID = $s->ID;
-$billing = new billing($postID);
+$customerID = $s->post_author;
+$subscriptionID = $s->post_title;
+
+$billing = new billing($postID, $customerID);
 
 $customerData = $billing->subscriptionCustomerData();
 //billing data
@@ -46,7 +52,7 @@ $shippingZip = $customerData['shippingZip'];
 $shippingCountry = $customerData['shippingCountry'];
 
 ?>
-<h2>Subscription ID:<?php echo $s->post_title ?></h2>
+<h2>Subscription ID:<?php echo $subscriptionID ?></h2>
 
 <h2>Billing Information</h2>
 First Name: <?php echo $billingFirstName; ?><br/>
@@ -77,14 +83,13 @@ Zip: <?php echo $shippingZip; ?><br/>
 Country: <?php echo $shippingCountry; ?><br/><br/>
 Some form here for editing shipping and updating shit etc..
 <?php } ?>
-<br/><br/><br/>
-<h2>DEBUGGING</h2>
-<h2>Manual Cancel</h2>
+<br/><br/>
+<h2>Administration Tools</h2>
+Cancel A Subscription<br/>
 <form method="POST">
-Subscription ID: <input type="text" name="subID">
-<input type="submit" name="manualCancel" value="Cancel Subscription">
-</form>
-
+Subscription ID: <input type="text" name="subID"><br/>
+Reason for Canceling: <input type="text" name="cancelReason"><br/>
+<input type="submit" name="cancelSubscription" value="Cancel">
 <?php 
 echo '<pre>';
 echo print_r($subscriptions);

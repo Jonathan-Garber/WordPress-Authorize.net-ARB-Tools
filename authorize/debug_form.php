@@ -1,41 +1,43 @@
 <?php wp_enqueue_script("jquery"); ?>
 <?php get_header();	?>
 		<?php
+		echo strtoupper(md5('TestAccountJWGarber1021927041840.00')).'<br/>';
+		echo '7BBA38F2CF3AF5FCFAC06555E7FF22DB';
 		//open connector to billing class it will grab the users data if it exists.
 		$billing = new billing(1351);
 		$userData = $billing->userArray();
-		$shippingData = $billing->shippingArray();
+		$billingData = $billing->billingArray();
 		//removed the call for billing data because the form always has empty billing data. Billing data is empty so the user can easily use different billing info for different orders. Each successfull order gets the proper billing data attached as META during the order process
 		?>
 		<script>
 jQuery(document).ready(function($) {
 	
     if ($("input[name=sameAddress]:checked").is(':checked')) {
-		$('#billingInputs').hide();
+		$('#shippingInputs').hide();
       }	
 	
 	$("#userFirstName").on('keyup focusout', function(){
-		$("#shippingFirstName").val(this.value);
+		$("#billingFirstName").val(this.value);
 	});
 	$("#userLastName").on('keyup focusout', function(){
-		$("#shippingLastName").val(this.value);
+		$("#billingLastName").val(this.value);
 	});	
 	$("#userCompany").on('keyup focusout', function(){
-		$("#shippingCompany").val(this.value);
+		$("#billingCompany").val(this.value);
 	});	
 	$("#userEmail").on('keyup focusout', function(){
-		$("#shippingEmail").val(this.value);
+		$("#billingEmail").val(this.value);
 	});	
 	$("#userPhoneNumber").on('keyup focusout', function(){
-		$("#shippingPhoneNumber").val(this.value);
+		$("#billingPhoneNumber").val(this.value);
 	});		
 	
     $('input[name=sameAddress]').click(function() {
     //alert('Using the same address');
     if ($("input[name=sameAddress]:checked").is(':checked')) {
-		$('#billingInputs').hide('slow');
+		$('#shippingInputs').hide('slow');
       }else{
-		$('#billingInputs').show('slow');
+		$('#shippingInputs').show('slow');
 	  };
     });
 });
@@ -59,28 +61,14 @@ jQuery(document).ready(function($) {
 		-->
 		
 		<h2>Account Information</h2>
-		<p>Please enter your account information we will use this information to create your account during the order process.<br/><br/><small>IP Address recorded for security purposes: <?php echo $userData[userIPAddress] ?></small></p>
+		<p>Please enter your account information we will use this information to create your account during the order process.<br/><br/><small>IP Address recorded for security purposes: <?php echo $userData[userIPAddress] ?></small></p><br/>
 		First Name: <input type="text" id="userFirstName" name="userFirstName" value="<?php echo $userData[userFirstName] ?>"><br/>
 		Last Name: <input type="text" id="userLastName" name="userLastName" value="<?php echo $userData[userLastName] ?>"><br/>
 		Company Name: <input type="text" id="userCompany" name="userCompany" value="<?php echo $userData[userCompany] ?>"><br/>
 		Email: <input type="text" id="userEmail" name="userEmail" value="<?php echo $userData[userEmail] ?>"><br/>
 		Phone Number: <input type="text" id="userPhoneNumber" name="userPhoneNumber" value="<?php echo $userData[userPhoneNumber] ?>"><br/><br/>
 		
-		<h2>Shipping Address</h2>
-		First Name: <input type="text" id="shippingFirstName" name="shippingFirstName" value="<?php echo $shippingData[shippingFirstName] ?>"><br/>
-		Last Name: <input type="text" id="shippingLastName" name="shippingLastName" value="<?php echo $shippingData[shippingLastName] ?>"><br/>
-		Company: <input type="text" id="shippingCompany" name="shippingCompany" value="<?php echo $shippingData[shippingCompany] ?>"><br/>		
-		Email: <input type="text" id="shippingEmail" name="shippingEmail" value="<?php echo $shippingData[shippingEmail] ?>"><br/>
-		Phone Number: <input type="text" id="shippingPhoneNumber" name="shippingPhoneNumber" value="<?php echo $shippingData[shippingPhoneNumber] ?>"><br/>
-		Address: <input type="text" id="shippingAddress" name="shippingAddress" value="<?php echo $shippingData[shippingAddress] ?>"><br/>
-		City: <input type="text" id="shippingCity" name="shippingCity" value="<?php echo $shippingData[shippingCity] ?>"><br/>
-		State/Province: <input type="text" id="shippingState" name="shippingState" value="<?php echo $shippingData[shippingState] ?>"><br/>
-		Zip: <input type="text" id="shippingZip" name="shippingZip" value="<?php echo $shippingData[shippingZip] ?>"><br/>
-		Country: <?php $billing->countrySelect('shippingCountry', $shippingData[shippingCountry]) ?><br/><br/>
-		
 		<h2>Billing Address</h2>
-		<p>Same as Shipping <input type="checkbox" id="sameAddress" name="sameAddress" value="Y" checked="checked" /></p>
-<div id="billingInputs">
 		First Name: <input type="text" id="billingFirstName" name="billingFirstName" value="<?php echo $billingData[billingFirstName] ?>"><br/>
 		Last Name: <input type="text" id="billingLastName" name="billingLastName" value="<?php echo $billingData[billingLastName] ?>"><br/>
 		Company: <input type="text" id="billingCompany" name="billingCompany" value="<?php echo $billingData[billingCompany] ?>"><br/>			
@@ -91,6 +79,18 @@ jQuery(document).ready(function($) {
 		State/Province: <input type="text" id="billingState" name="billingState" value="<?php echo $billingData[billingState] ?>"><br/>
 		Zip: <input type="text" id="billingZip" name="billingZip" value="<?php echo $billingData[billingZip] ?>"><br/>
 		Country: <?php $billing->countrySelect('billingCountry') ?>
+		<br/><br/>
+		<h2>Shipping Address</h2>
+		<p>Same as Billing Address <input type="checkbox" id="sameAddress" name="sameAddress" value="Y" checked="checked" /></p><br/><br/>
+<div id="shippingInputs">	
+		First Name: <input type="text" id="shippingFirstName" name="shippingFirstName" value="<?php echo $shippingData[shippingFirstName] ?>"><br/>
+		Last Name: <input type="text" id="shippingLastName" name="shippingLastName" value="<?php echo $shippingData[shippingLastName] ?>"><br/>
+		Company: <input type="text" id="shippingCompany" name="shippingCompany" value="<?php echo $shippingData[shippingCompany] ?>"><br/>
+		Address: <input type="text" id="shippingAddress" name="shippingAddress" value="<?php echo $shippingData[shippingAddress] ?>"><br/>
+		City: <input type="text" id="shippingCity" name="shippingCity" value="<?php echo $shippingData[shippingCity] ?>"><br/>
+		State/Province: <input type="text" id="shippingState" name="shippingState" value="<?php echo $shippingData[shippingState] ?>"><br/>
+		Zip: <input type="text" id="shippingZip" name="shippingZip" value="<?php echo $shippingData[shippingZip] ?>"><br/>
+		Country: <?php $billing->countrySelect('shippingCountry', $shippingData[shippingCountry]) ?><br/><br/>
 </div>
 
 <br/><br/>
@@ -104,11 +104,3 @@ jQuery(document).ready(function($) {
 		Security Code<input type="text" name="ccCode"><br/><br/>
 		<input type="submit" name="doSignUp" value="Place Order">
 		</form>
-		
-<?php
-$serviceArray = $billing->serviceArray();
-echo '<pre>';
-print_r($serviceArray);
-echo '</pre>';
-echo '<br/><br/>';
-
