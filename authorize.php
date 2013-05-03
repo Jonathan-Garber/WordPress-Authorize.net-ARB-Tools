@@ -54,7 +54,6 @@ wp_insert_post( $silentReturn );
 wp_insert_post( $thankYouPage );
 wp_insert_post( $processPage );
 
-
 }
 
 /*
@@ -77,7 +76,6 @@ function pageTemplates($page_template) {
 	if ( is_page( 'silent-return' ) ) {
 		return $dir . '/sbd.php';
 	}	
-	
 }
 
 
@@ -86,11 +84,6 @@ function pageTemplates($page_template) {
 */
 function authorizeMenu() {
 	add_submenu_page( 'options-general.php', 'Authorize.net Settings', 'Authorize.net Settings', 'manage_options', 'auth-settings', 'authSettings' );
-	add_submenu_page( 'options-general.php', 'Authorize.net Subscriptions', 'Authorize.net Subscriptions', 'manage_options', 'auth-subs', 'authSubs' );
-	add_submenu_page( 'options-general.php', 'Authorize.net Transactions', 'Authorize.net Transactions', 'manage_options', 'auth-trans', 'authTrans' );	
-	
-	
-	
 }
 add_action('admin_menu', 'authorizeMenu');
 
