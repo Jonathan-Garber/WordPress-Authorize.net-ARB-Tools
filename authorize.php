@@ -11,7 +11,10 @@
 Requires
 */
 require_once('authorize/authorizeClasses.php');
-require_once('functions/classes.php');
+require_once('classes/billing.php');
+require_once('classes/billing_update.php');
+require_once('classes/sbd.php');
+
 
 /*
 	Create required pages in backend
@@ -29,8 +32,18 @@ $thankYouPage = array(
   'post_category' => array(0)
 );
 
+$processAccountUpdate = array(
+  'post_title'    => 'Update Account',
+  'comment_status' => 'closed',
+  'ping_status' => 'closed',
+  'post_status'   => 'publish',
+  'post_type' => 'page',
+  'post_author'   => 1,
+  'post_category' => array(0)
+);
+
 $processPage = array(
-  'post_title'    => 'Processing Order',
+  'post_title'    => 'Order',
   'comment_status' => 'closed',
   'ping_status' => 'closed',
   'post_status'   => 'publish',
@@ -50,6 +63,7 @@ $silentReturn = array(
 );
 
 // Insert the post into the database
+wp_insert_post( $processAccountUpdate );
 wp_insert_post( $silentReturn );
 wp_insert_post( $thankYouPage );
 wp_insert_post( $processPage );
@@ -63,14 +77,14 @@ add_filter('page_template', 'pageTemplates');
 
 function pageTemplates($page_template) {
 	global $wp_query, $post;
-	$dir = ABSPATH . 'wp-content/plugins/authorize-manager/authorize';	
+	$dir = ABSPATH . 'wp-content/plugins/authorize-manager/authorize';
 	
-	if ( is_page( 'processing-order' ) ) {
+	if ( is_page( 'update-account' ) ) {
+		return $dir . '/process_account_update.php';
+	}	
+	
+	if ( is_page( 'order' ) ) {
 		return $dir . '/process_order.php';
-	}
-	
-	if ( is_page( 'debug-form' ) ) {
-		return $dir . '/debug_form.php';
 	}
 
 	if ( is_page( 'silent-return' ) ) {

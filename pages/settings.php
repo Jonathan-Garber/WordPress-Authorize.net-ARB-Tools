@@ -10,6 +10,8 @@ if (isset($_POST['saveAPISettings'])){
 	update_option('apiTestMode', $_POST['apiTestMode']);
 	update_option('apiHash', $_POST['apiHash']);
 	update_option('vtUser', $_POST['vtUser']);
+	update_option('cutOffDay', $_POST['cutOffDay']);
+	update_option('startDay', $_POST['startDay']);
 	$resp = 'All settings have been updated';
 }
 
