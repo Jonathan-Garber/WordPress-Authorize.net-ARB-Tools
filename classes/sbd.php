@@ -72,11 +72,9 @@ class sbd {
 		//VT MD5
 		$this->vtMD5 = strtoupper( md5( $this->hashKey . $this->vtUser . $this->x_trans_id . $this->x_amount ) );
 		
-		if ( $this->arbMD5 == $this->x_MD5_Hash || $this->aimMD5 == $this->x_MD5_Hash || $this->vtMD5 == $this->x_MD5_Hash ){
-		
-			$this->insertTransaction();
-			
-		}
+		if ( $this->arbMD5 == $this->x_MD5_Hash || $this->aimMD5 == $this->x_MD5_Hash || $this->vtMD5 == $this->x_MD5_Hash ){		
+			$this->insertTransaction();			
+		}		
 	}
 	
 	
@@ -141,7 +139,12 @@ class sbd {
 		}
 		
 		if ($this->x_trans_id == 0 || $this->x_trans_id == ''){
-			$this->x_trans_id = 'Error-'.rand(10000, 100000);
+			$this->x_trans_id = 'Error-'.$this->x_invoice_num;
+		}
+		
+				
+		if ( $this->x_cust_id == '' || $this->x_cust_id == 0){
+			$this->x_cust_id = '1';
 		}
 		
 		$transactionPost = array(

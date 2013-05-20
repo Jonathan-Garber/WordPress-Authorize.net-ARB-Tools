@@ -15,6 +15,13 @@ require_once('classes/billing.php');
 require_once('classes/billing_update.php');
 require_once('classes/sbd.php');
 
+add_action('admin_init', 'disableDashboard');
+function disableDashboard() {
+  if (!current_user_can('manage_options') && $_SERVER['DOING_AJAX'] != '/wp-admin/admin-ajax.php') {
+  wp_redirect(home_url()); exit;
+  }
+}
+
 
 /*
 	Create required pages in backend

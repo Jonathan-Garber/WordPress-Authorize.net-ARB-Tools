@@ -506,7 +506,7 @@ Product Amount: '.$this->productAmount.'
 		wp_set_current_user($this->userID, $this->userEmail);
         wp_set_auth_cookie($this->userID);
         do_action('wp_login', $this->userEmail);
-	}	
+	}
 	
 	public function setUserData(){
 	
