@@ -19,6 +19,7 @@ class billing {
 		
 		$this->cutOffDay = get_option('cutOffDay');
 		$this->startDay = get_option('startDay');
+		$this->thankYouPageID = get_option('thankYouPageID');
 
 		
 		$this->userFirstName = get_userdata($this->userID)->user_firstname;
@@ -53,7 +54,7 @@ class billing {
 		$this->shippingCity = get_user_meta($this->userID, 'shippingCity', true);
 		$this->shippingState = get_user_meta($this->userID, 'shippingState', true);
 		$this->shippingZip = get_user_meta($this->userID, 'shippingZip', true);
-		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);
+		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);		
 	}
 	
 	/*
@@ -274,7 +275,12 @@ Product Amount: '.$this->productAmount.'
 					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');				
 					
 					//send em to the thank you page
-					wp_redirect('/thank-you');
+					$thankYouPageID = get_option('thankYouPageID');
+					
+					wp_redirect(
+									'/?page_id=' . $thankYouPageID .
+									'&subPostID=' . $this->subscriptionPostID
+								);
 				}
 			}
 			
@@ -297,8 +303,13 @@ Product Amount: '.$this->productAmount.'
 						//insert subscription post
 						$this->insertSubscription();
 						
-						//send em to the thank you page
-						wp_redirect('/thank-you');
+					//send em to the thank you page
+					$thankYouPageID = get_option('thankYouPageID');
+					
+					wp_redirect(
+									'/?page_id=' . $thankYouPageID .
+									'&subPostID=' . $this->subscriptionPostID
+								);
 					}
 				}
 			}
@@ -374,7 +385,17 @@ Product Amount: '.$this->productAmount.'
 		update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', '0');
 		update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
 		update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '0');
-		update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');
+		update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');		
+		
+		//take additional form data and add it to subscription meta
+		if ( is_array( $this->addonData ) ){
+			update_post_meta($this->subscriptionPostID, 'subscriptionAddonData', $this->addonData);
+			
+			foreach ($this->addonData as $k => $v){
+				update_post_meta($this->subscriptionPostID, $k, $v);
+			}
+			
+		}
 	}
 	
 	public function createSubscription(){
@@ -470,11 +491,15 @@ Product Amount: '.$this->productAmount.'
 			$this->setUserData();
 			//log in the successfully created user...
 			$this->loginUser();	
-			wp_new_user_notification($this->userID, $newpass);			
+			wp_new_user_notification($this->userID, $newpass);
+			
+			return $userID;
+			
 		}else{
 			$this->errorMessage = $userID->get_error_message();
 			$this->dispatchEmail();
 		}
+		
 	}
 	
 	public function loginUser(){
@@ -538,13 +563,17 @@ Product Amount: '.$this->productAmount.'
 			API Test Mode: <input %s type="checkbox" name="apiTestMode"><br/>
 			Virtual Terminal Username: <input type="text" name="vtUser" value="%s">
 			<br/><br/>
+			<h2>Billing Settings</h2>
 			Billing Cut Off Day: <input type="text" name="cutOffDay" value="%s"><br/>
 			<small>Orders placed before this day of the month are billed right away. 01-31</small><br/>
 			Day of Billing: <input type="text" name="startDay" value="%s"><br/>
 			<small>This is they day billing will occur each month for recurring orders. 01-31</small>
-			<br/><br/>			
+			<br/><br/>
+			<h2>Page Settings</h2>
+			Thank You Page ID: <input type="text" name="thankYouPageID" value="%s"><br/>
+			<small>Enter the ID of the page you wish to use for your Thank-You page.</small><br/><br/>
 			<input type="submit" name="saveAPISettings" value="Save Settings">
-		', $this->apiLogin, $this->apiKey, $this->apiEmail ,$this->hash, $apiTestMode, $this->vtUser, $this->cutOffDay, $this->startDay );
+		', $this->apiLogin, $this->apiKey, $this->apiEmail ,$this->hash, $apiTestMode, $this->vtUser, $this->cutOffDay, $this->startDay, $this->thankYouPageID );
 	
 	}
 
@@ -974,6 +1003,7 @@ Product Amount: '.$this->productAmount.'
 		$array[subscriptionNextBillingDate] = get_post_meta($this->postID, 'subscriptionNextBillingDate', true);
 		$array[subscriptionPaymentNumber] = get_post_meta($this->postID, 'subscriptionPaymentNumber', true);
 		$array[subscriptionStatus] = get_post_meta($this->postID, 'subscriptionStatus', true);
+		$array[subscriptionAddonData] = get_post_meta($this->postID, 'subscriptionAddonData', true);
 		
 		return $array;
 	}

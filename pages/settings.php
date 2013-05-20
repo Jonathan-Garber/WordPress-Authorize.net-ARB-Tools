@@ -12,6 +12,7 @@ if (isset($_POST['saveAPISettings'])){
 	update_option('vtUser', $_POST['vtUser']);
 	update_option('cutOffDay', $_POST['cutOffDay']);
 	update_option('startDay', $_POST['startDay']);
+	update_option('thankYouPageID', $_POST['thankYouPageID']);
 	$resp = 'All settings have been updated';
 }
 

@@ -22,72 +22,56 @@ require_once('classes/sbd.php');
 register_activation_hook( __FILE__, 'registerPages' );
 
 function registerPages(){
-$thankYouPage = array(
-  'post_title'    => 'Thank You',
-  'comment_status' => 'closed',
-  'ping_status' => 'closed',
-  'post_status'   => 'publish',
-  'post_type' => 'page',
-  'post_author'   => 1,
-  'post_category' => array(0)
-);
 
-$processAccountUpdate = array(
-  'post_title'    => 'Update Account',
-  'comment_status' => 'closed',
-  'ping_status' => 'closed',
-  'post_status'   => 'publish',
-  'post_type' => 'page',
-  'post_author'   => 1,
-  'post_category' => array(0)
-);
+$thankYouPageID = get_option('thankYouPageID');
+$silentReturnPostID = get_option('silentReturnPostID');
 
-$processPage = array(
-  'post_title'    => 'Order',
-  'comment_status' => 'closed',
-  'ping_status' => 'closed',
-  'post_status'   => 'publish',
-  'post_type' => 'page',
-  'post_author'   => 1,
-  'post_category' => array(0)
-);
+if ( empty($thankYouPageID) ){
+	$thankyou = array(
+	  'post_title'    => 'Thank You',
+	  'comment_status' => 'closed',
+	  'ping_status' => 'closed',
+	  'post_status'   => 'publish',
+	  'post_type' => 'page',
+	  'post_author'   => 1,
+	  'post_category' => array(0)
+	);
+}
 
-$silentReturn = array(
-  'post_title'    => 'Silent Return',
-  'comment_status' => 'closed',
-  'ping_status' => 'closed',
-  'post_status'   => 'publish',
-  'post_type' => 'page',
-  'post_author'   => 1,
-  'post_category' => array(0)
-);
+
+if ( empty($silentReturnPostID) ){
+	$silentReturn = array(
+	  'post_title'    => 'Silent Return',
+	  'comment_status' => 'closed',
+	  'ping_status' => 'closed',
+	  'post_status'   => 'publish',
+	  'post_type' => 'auth-processors',
+	  'post_author'   => 1,
+	  'post_category' => array(0)
+	);
+}
 
 // Insert the post into the database
-wp_insert_post( $processAccountUpdate );
-wp_insert_post( $silentReturn );
-wp_insert_post( $thankYouPage );
-wp_insert_post( $processPage );
+$thankYouPageID = wp_insert_post( $thankyou );
+$silentReturnPostID = wp_insert_post( $silentReturn );
+
+update_option('thankYouPageID', $thankYouPageID);
+update_option('silentReturnPostID', $silentReturnPostID);
 
 }
 
 /*
 	Custom Template for displaying products/order form etc.
 */
-add_filter('page_template', 'pageTemplates');
+add_filter('single_template', 'pageTemplates');
 
-function pageTemplates($page_template) {
+function pageTemplates($single) {
 	global $wp_query, $post;
 	$dir = ABSPATH . 'wp-content/plugins/authorize-manager/authorize';
 	
-	if ( is_page( 'update-account' ) ) {
-		return $dir . '/process_account_update.php';
-	}	
-	
-	if ( is_page( 'order' ) ) {
-		return $dir . '/process_order.php';
-	}
+	$silentReturnPostID = get_option('silentReturnPostID');
 
-	if ( is_page( 'silent-return' ) ) {
+	if ( is_single( $silentReturnPostID ) ) {
 		return $dir . '/sbd.php';
 	}	
 }
@@ -338,6 +322,33 @@ add_action('init', 'authRegisterPosts');
 add_action('delete_post', 'authRegisterPosts');
 
 function authRegisterPosts(){
+
+$testMode = get_option('apiTestMode');
+
+if ($testMode == 'on'){
+	$display = true;
+}else{
+	$display = false;
+}
+
+			register_post_type ( 'auth-processors',
+				array( 
+				'label' => 'Processors',
+				'public' => $display,
+				'show_ui' => $display,
+				'menu_icon' => '',
+				'show_in_admin' => $display,
+				'show_in_nav_menus' => false,
+				'rewrite' => true,
+				'supports' => array(
+								'title',
+								'editor',
+								'custom-fields'
+								)
+				)
+			);
+
+/*
 			register_post_type ( 'auth-services',
 				array( 
 				'label' => 'Products',
@@ -353,21 +364,24 @@ function authRegisterPosts(){
 								'custom-fields'
 								)
 				)
-			);
+			);	
+*/
+			
 			
 			register_post_type ( 'auth-transactions',
 				array( 
 				'label' => 'Transactions',
-				'public' => true,
-				'show_ui' => true,
+				'public' => $display,
+				'show_ui' => $display,
 				'menu_icon' => '',
-				'show_in_admin' => true,
+				'show_in_admin' => $display,
 				'show_in_nav_menus' => false,
 				'rewrite' => true,
 				'supports' => array(
 								'title',
 								'editor',
-								'custom-fields'
+								'custom-fields',
+								'author'
 								)
 				)
 			);
@@ -375,16 +389,17 @@ function authRegisterPosts(){
 			register_post_type ( 'auth-subscriptions',
 				array( 
 				'label' => 'Subscriptions',
-				'public' => true,
-				'show_ui' => true,
+				'public' => $display,
+				'show_ui' => $display,
 				'menu_icon' => '',
-				'show_in_admin' => true,
+				'show_in_admin' => $display,
 				'show_in_nav_menus' => false,
 				'rewrite' => true,
 				'supports' => array(
 								'title',
 								'editor',
-								'custom-fields'
+								'custom-fields',
+								'author'
 								)
 				)
 			);			

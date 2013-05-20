@@ -54,7 +54,9 @@ class billingUpdate{
 		$this->subscriptionNextBillingDate = get_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', true);
 		$this->subscriptionPaymentNumber = get_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', true);
 		$this->subscriptionStatus = get_post_meta($this->subscriptionPostID, 'subscriptionStatus', true);
-
+		$this->cclastFour = get_post_meta($this->subscriptionPostID, 'ccLastFour', true);
+		$this->ccMonth = get_post_meta($this->subscriptionPostID, 'ccMonth', true);
+		$this->ccYear = get_post_meta($this->subscriptionPostID, 'ccYear', true);
 		$this->subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
 		$this->subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);
 		
@@ -130,6 +132,61 @@ Subscription Status: '.$this->subscriptionStatus.'
 	
 	}
 
+	
+	public function processBillingUpdateNoCC(){
+		$this->updateARBNoCC();
+	
+		if ($this->arbUpdateStatus == 'Ok'){
+			$this->updateSubscriptionMeta();
+			$this->response = 'Your subscription information has been updated.';
+		}	
+	}
+	
+	public function updateARBNoCC(){
+		$this->refID = 'BU-UID-'.$this->userID;
+		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
+		$xml->ARBUpdateSubscriptionRequest(array(
+			'refId' => $this->refID,
+			'subscriptionId' => $this->subscriptionID,
+			'subscription' => array(
+				'customer' => array(
+					'id' => $this->userID,
+					'email' => $this->billingEmail,
+					'phoneNumber' => $this->billingPhoneNumber,
+				),
+				'billTo' => array(
+					'firstName' => $this->billingFirstName,
+					'lastName' => $this->billingLastName,
+					'company' => $this->billingCompany,
+					'address' => $this->billingAddress,
+					'city' => $this->billingCity,
+					'state' => $this->billingState,
+					'zip' => $this->billingZip,
+					'country' => $this->billingCountry,
+				),
+				'shipTo' => array(
+					'firstName' => $this->shippingFirstName,
+					'lastName' => $this->shippingLastName,
+					'company' => $this->shippingCompany,
+					'address' => $this->shippingAddress,
+					'city' => $this->shippingCity,
+					'state' => $this->shippingState,
+					'zip' => $this->shippingZip,
+					'country' => $this->shippingCountry,
+				)				
+			),
+		));
+		
+		if ($xml->isSuccessful()){
+			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
+		}else{
+			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;
+			$this->dispatchUpdateErrorEmail();
+		}
+	}
+	
+	
+	
 	public function processBillingUpdate(){
 	
 		if ($this->subscriptionStatus == 'error' && $this->arbSubscriptionStatus == 'suspended') {
@@ -154,8 +211,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 				we need to run the preauth, void, and then update ARB and our info here.
 			*/
 			$this->updateMethod = 'preauth';
-			$this->updateARBBilling();
-		
+			$this->updateARBBilling();		
 		}
 	}
 	
@@ -180,7 +236,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 		
 		if ($this->arbUpdateStatus == 'Ok'){
 			$this->updateSubscriptionMeta();
-			$this->response = 'Your billing informaiton has been updated.';
+			$this->response = 'Your billing information has been updated.';
 		}
 	}	
 	
@@ -209,7 +265,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 		update_post_meta($this->subscriptionPostID, 'shippingCountry', $this->shippingCountry);
 		
 		update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');
-		update_post_meta($this->subscriptionPostID, 'ccLastFour', $this->lastFour);
+		update_post_meta($this->subscriptionPostID, 'ccLastFour', $this->cclastFour);
 		update_post_meta($this->subscriptionPostID, 'ccMonth', $this->ccMonth);
 		update_post_meta($this->subscriptionPostID, 'ccYear', $this->ccYear);
 		

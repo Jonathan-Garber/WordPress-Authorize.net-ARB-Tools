@@ -1,6 +1,6 @@
 <?php
 /*
-Order Process Template: Processes the submitted order data.
+Template Name: Order Form
 */
 
 if (isset($_POST['doSignUp'])){
@@ -21,6 +21,10 @@ if (isset($_POST['doSignUp'])){
 	$billing->billingState = $_POST['billingState'];
 	$billing->billingZip = $_POST['billingZip'];
 	$billing->billingCountry = $_POST['billingCountry'];
+	
+	
+	//do we have addon data?
+	$billing->addonData = $_POST['addonData'];
 
 	//Are we using the same info for billing as we did for shipping?
 	if ($_POST['sameAddress'] == 'Y'){
@@ -55,10 +59,10 @@ if (isset($_POST['doSignUp'])){
 	//product or service information		
 	$billing->productName = $_POST['productName'];
 	$billing->productDescription = $_POST['productDescription'];
-	$billing->productAmount = $_POST['productAmount'];	
+	$billing->productAmount = $_POST['productAmount'];
 	$billing->productOccurrences = $_POST['productOccurrences'];		
 	
-	//is this a subscription or single payment?		
+	//is this a subscription or single payment?
 	if ($billing->productOccurrences > 1){
 		$billing->transactionType = 'arb';
 		$billing->productUnit = $_POST['productUnit'];
@@ -84,6 +88,15 @@ if (isset($_POST['doSignUp'])){
 	//user is not logged in if ID is 0
 	if ($billing->userID == 0){
 		$createUser = $billing->createUser();
+		
+		//if the ID is now higher then 0 then the user is logged in
+		if ($createUser != 0){
+			if ($billing->transactionType == 'single'){
+				$processPayment = $billing->processPayment();			
+			}else{
+				$processARB = $billing->processARB();
+			}
+		}
 	}else{
 		//user is logged into the new account or was already logged into current account.	
 		if ($billing->transactionType == 'single'){
@@ -158,6 +171,10 @@ jQuery(document).ready(function($) {
 		<input type="hidden" name="productTrialOccurrences" value="0">
 		<input type="hidden" name="productTrialAmount" value="0.00">
 		-->
+		
+		<h2>Test Additional Data</h2>
+		Birthday: <input type="text" name="addonData[birthday]" value=""><br/>
+		Referral: <input type="text" name="addonData[referrals]" value=""><br/><br/>
 		
 		<h2>Account Information</h2>
 		<p>Please enter your account information we will use this information to create your account during the order process.<br/><br/><small>IP Address recorded for security purposes: <?php echo $userData[userIPAddress] ?></small></p><br/>
