@@ -3,33 +3,8 @@
 Template Name: Account Management
 */
 
-/*
-	If logged in else redirect to login
-	if admin and has ghostID load ghosts subscriptions
-	if admin and no ghostID load the admins subscriptions -probably never used-
-	if not admin and logged in log current users id and show their subs
-
-	this way the system locks down to only admins being able to ghost a user
-*/
-
 if ( is_user_logged_in() ) {
-	if ( current_user_can( 'manage_options' ) ) {
-		 if (isset($_GET['ghostID'])){
-			$userID = $_GET['ghostID'];
-		}else{
-			$userID = get_current_user_id();			
-		}
-	}else{
-		/*
-			This stops a user that is not admin from even trying to open a ghostID.
-			it redirects any user with a ghostID who is not admin to the homepage.
-		*/
-		 if (isset($_GET['ghostID'])){
-			wp_redirect('/');
-		}else{
-			$userID = get_current_user_id();
-		}
-	}
+	$userID = get_current_user_id();
 }else{
 wp_redirect('/wp-login.php');
 }
