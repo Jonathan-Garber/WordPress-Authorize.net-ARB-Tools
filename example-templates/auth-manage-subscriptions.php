@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Account Management
+Template Name: Manage Subscriptions
 */
 
 if ( is_user_logged_in() ) {

@@ -265,7 +265,7 @@ Product Amount: '.$this->productAmount.'
 				//create subscription sets a subscription ID upon success				
 				if ( strlen($this->subscriptionID) > 4 ){
 					//we insert the initial subscription post and data here.
-					$this->insertSubscription();					
+					$this->insertSubscription();
 					
 					//Since we billed them the initial payment already we are going to update their Subscription Meta to be ACTIVE & show payment number of 1 as well as the last date billing occurred and the next date billing is scheduled to occur on.
 					
@@ -273,6 +273,9 @@ Product Amount: '.$this->productAmount.'
 					update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
 					update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '1');
 					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');				
+					
+					//set defaults and user data after successful payment/sub creations	
+					$this->setUserData();
 					
 					//send em to the thank you page
 					$thankYouPageID = get_option('thankYouPageID');
@@ -302,7 +305,10 @@ Product Amount: '.$this->productAmount.'
 					if ( strlen($this->subscriptionID) > 4 ){
 						//insert subscription post
 						$this->insertSubscription();
-						
+					
+					//set defaults and user data after successful payment/sub creations	
+					$this->setUserData();
+					
 					//send em to the thank you page
 					$thankYouPageID = get_option('thankYouPageID');
 					
@@ -487,8 +493,7 @@ Product Amount: '.$this->productAmount.'
 		$userID = wp_insert_user( $userdata );
 		
 		if (is_numeric($userID)){
-			$this->userID = $userID;
-			$this->setUserData();
+			$this->userID = $userID;			
 			//log in the successfully created user...
 			$this->loginUser();	
 			wp_new_user_notification($this->userID, $newpass);
@@ -540,7 +545,7 @@ Product Amount: '.$this->productAmount.'
 		//inserts cc data to user meta
 		update_user_meta($this->userID, 'ccLastFour', $this->lastFour);
 		update_user_meta($this->userID, 'ccMonth', $this->ccMonth);
-		update_user_meta($this->userID, 'ccYear', $this->ccYear);		
+		update_user_meta($this->userID, 'ccYear', $this->ccYear);
 		
 	}
 	

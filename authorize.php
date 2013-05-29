@@ -15,13 +15,12 @@ require_once('classes/billing.php');
 require_once('classes/billing_update.php');
 require_once('classes/sbd.php');
 
-add_action('admin_init', 'disableDashboard');
+//add_action('admin_init', 'disableDashboard');
 function disableDashboard() {
   if (!current_user_can('manage_options') && $_SERVER['DOING_AJAX'] != '/wp-admin/admin-ajax.php') {
   wp_redirect(home_url()); exit;
   }
 }
-
 
 /*
 	Create required pages in backend
@@ -74,7 +73,7 @@ add_filter('single_template', 'pageTemplates');
 
 function pageTemplates($single) {
 	global $wp_query, $post;
-	$dir = ABSPATH . 'wp-content/plugins/authorize-manager/authorize';
+	$dir = ABSPATH . 'wp-content/plugins/WordPress-Authorize.net-ARB-Tools/authorize';
 	
 	$silentReturnPostID = get_option('silentReturnPostID');
 

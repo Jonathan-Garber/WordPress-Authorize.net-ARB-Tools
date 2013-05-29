@@ -1,7 +1,8 @@
 <?php
 /*
-Template Name: Order Form
+Template Name: Subscribe Form
 */
+
 
 if (isset($_POST['doSignUp'])){
 	$billing = new billing();
