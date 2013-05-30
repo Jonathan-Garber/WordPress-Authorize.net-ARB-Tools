@@ -95,7 +95,9 @@ Product Amount: '.$this->productAmount.'
 		if ($xml->isSuccessful()){
 			$this->voidCode = (string) $xml->transactionResponse->responseCode;
 		}else{
-			$this->errorMessage = (string) 'Void Error: '.$xml->messages->message->text;
+			$message = (string) $xml->messages->message->text;			
+			$this->errorMessage = 'Void Error: '.$message;
+			$this->errorArray = array ('type' => 'Void Error', 'message' => $message);
 			$this->dispatchEmail();
 		}
 	}
@@ -166,9 +168,11 @@ Product Amount: '.$this->productAmount.'
 		));
 
 		if ($xml->isSuccessful()){
-			$this->transactionID = (string) $xml->transactionResponse->transId;			
+			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{
-			$this->errorMessage = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
+			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
+			$this->errorMessage = 'Payment Error: '. $message;
+			$this->errorArray = array('type' => 'Payment Error', 'message' => $message);
 			$this->dispatchEmail();
 		}
 	}
@@ -218,8 +222,10 @@ Product Amount: '.$this->productAmount.'
 
 		if ($xml->isSuccessful()){
 			$this->transactionID = (string) $xml->transactionResponse->transId;
-		}else{
-			$this->errorMessage = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
+		}else{			
+			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
+			$this->errorMessage = 'Payment Error: '. $message;
+			$this->errorArray = array ('type' => 'Payment Error', 'message' => $message);
 			$this->dispatchEmail();
 		}
 	}
@@ -465,8 +471,11 @@ Product Amount: '.$this->productAmount.'
 		if ($xml->isSuccessful()){
 			$this->subscriptionID = (string) $xml->subscriptionId;
 		}else{
-			$this->errorMessage = (string) 'Subscription Error: '.$xml->messages->message->text;			
-			$this->dispatchEmail();
+			$message = (string) $xml->messages->message->text;
+			$this->errorMessage = 'Subscription Error: '.$message;
+			$this->errorArray = array ('type' => 'Subscription Error', 'message' => $message);
+			$this->dispatchEmail();		
+			
 			if ($this->billInitialPayment == 'on'){
 				//We already billed for this subscription but it failed to create. We now need to void the billing charge.
 				$this->voidReason = 'Voided due to subscription creation error';
@@ -501,7 +510,9 @@ Product Amount: '.$this->productAmount.'
 			return $userID;
 			
 		}else{
-			$this->errorMessage = $userID->get_error_message();
+			$message = $userID->get_error_message();
+			$this->errorMessage = 'Registration Error: '.$message;
+			$this->errorArray = array ('type' => 'Registration Error', 'message' => $message);
 			$this->dispatchEmail();
 		}
 		
@@ -687,22 +698,51 @@ Product Amount: '.$this->productAmount.'
 		return $array;
 	}
 	
-	public function monthSelect($fieldName){
-		echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
-		  for ($i = 1; $i <= 12; $i++) {			
-			$month = date("F", mktime(0, 0, 0, $i, 1));			
-			printf('<option value="%s">%s - %s</option>', $i, $i ,$month);
-		  }
-		echo '</select>';
+	public function monthSelect($fieldName, $array = ''){
+	
+		if ($array === true){
+		
+			$array = array();
+			  for ($i = 1; $i <= 12; $i++) {
+				$month = date("F", mktime(0, 0, 0, $i, 1));
+				$array[$i] = $month;
+			  }			
+			return $array;
+			
+		}else{
+		
+			echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
+			  for ($i = 1; $i <= 12; $i++) {			
+				$month = date("F", mktime(0, 0, 0, $i, 1));			
+				printf('<option value="%s">%s - %s</option>', $i, $i ,$month);
+			  }
+			echo '</select>';
+			
+		}
+		
 	}
 	
-	public function yearSelect($fieldName){
-		echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
-		$year = date("Y"); for ($i = 0; $i <= 12; $i++) {echo "<option>$year</option>"; $year++;}
-		echo '</select>';
+	public function yearSelect($fieldName, $array = ''){
+	
+		if ($array === true){
+			$array = array();
+			
+			$year = date("Y"); 
+			for ($i = 0; $i <= 12; $i++) {
+				$array[$year] = $year;
+				$year++;
+			}
+			return $array;
+			
+		}else{	
+			echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
+			$year = date("Y"); for ($i = 0; $i <= 12; $i++) {echo "<option>$year</option>"; $year++;}
+			echo '</select>';
+		}
+		
 	}
 	
-	public function countrySelect($fieldName, $selected = ''){
+	public function countrySelect($fieldName, $array = '', $selected = ''){
 	$countries = array(
 		  "US" => "United States",
 		  "GB" => "United Kingdom",		  
@@ -945,15 +985,19 @@ Product Amount: '.$this->productAmount.'
 		  "ZW" => "Zimbabwe"
 		);
 		
-		echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
-		foreach ($countries as $value => $option){
-			if ($selected == $value){
-				echo '<option selected="selected" value="'.$value.'">'.$option.'</option>';
+		if ($array === true){
+			return $countries;		
+		}else{		
+			echo '<select id="'.$fieldName.'" name="'.$fieldName.'">';
+			foreach ($countries as $value => $option){
+				if ($selected == $value){
+					echo '<option selected="selected" value="'.$value.'">'.$option.'</option>';
+				}
+				echo '<option value="'.$value.'">'.$option.'</option>';
+				
 			}
-			echo '<option value="'.$value.'">'.$option.'</option>';
-			
+			echo '</select>';
 		}
-		echo '</select>';
 	}
 	
 	/*
