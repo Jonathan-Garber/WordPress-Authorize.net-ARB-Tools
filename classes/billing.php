@@ -278,10 +278,7 @@ Product Amount: '.$this->productAmount.'
 					update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', $this->dateToday);
 					update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
 					update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '1');
-					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');				
-					
-					//set defaults and user data after successful payment/sub creations	
-					$this->setUserData();
+					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');
 					
 					//send em to the thank you page
 					$thankYouPageID = get_option('thankYouPageID');
@@ -311,9 +308,6 @@ Product Amount: '.$this->productAmount.'
 					if ( strlen($this->subscriptionID) > 4 ){
 						//insert subscription post
 						$this->insertSubscription();
-					
-					//set defaults and user data after successful payment/sub creations	
-					$this->setUserData();
 					
 					//send em to the thank you page
 					$thankYouPageID = get_option('thankYouPageID');
@@ -492,10 +486,10 @@ Product Amount: '.$this->productAmount.'
 	public function createUser(){
 		$newpass = wp_generate_password( 12, false );
 		$userdata = array(
-			'user_login' => esc_attr($this->billingEmail),
-			'first_name' => esc_attr($this->billingFirstName),
-			'last_name' => esc_attr($this->billingLastName),
-			'user_email' => esc_attr($this->billingEmail),
+			'user_login' => esc_attr($this->userEmail),
+			'first_name' => esc_attr($this->userFirstName),
+			'last_name' => esc_attr($this->userLastName),
+			'user_email' => esc_attr($this->userEmail),
 			'user_pass' => esc_attr($newpass),
 			'role' => 'subscriber'
 		);
@@ -506,6 +500,9 @@ Product Amount: '.$this->productAmount.'
 			//log in the successfully created user...
 			$this->loginUser();	
 			wp_new_user_notification($this->userID, $newpass);
+			
+			//set defaults and user data after successful payment/sub creations	
+			$this->setUserData();
 			
 			return $userID;
 			
@@ -697,6 +694,23 @@ Product Amount: '.$this->productAmount.'
 		
 		return $array;
 	}
+	
+	public function shippingArray(){		
+		//set us up the array		
+		$array = array();
+		
+		//shipping
+		$array['shippingFirstName'] = $this->shippingFirstName;
+		$array['shippingLastName'] = $this->shippingLastName;
+		$array['shippingCompany'] = $this->shippingCompany;				
+		$array['shippingAddress'] = $this->shippingAddress;
+		$array['shippingCity'] = $this->shippingCity;
+		$array['shippingState'] = $this->shippingState;
+		$array['shippingZip'] = $this->shippingZip;
+		$array['shippingCountry'] = $this->shippingCountry;
+		
+		return $array;
+	}	
 	
 	public function monthSelect($fieldName, $array = ''){
 	
