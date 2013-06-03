@@ -58,13 +58,16 @@ class billingUpdate{
 		$this->ccMonth = get_post_meta($this->subscriptionPostID, 'ccMonth', true);
 		$this->ccYear = get_post_meta($this->subscriptionPostID, 'ccYear', true);
 		$this->subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
-		$this->subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);
-		
-		$this->arbSubscriptionStatus = $this->getARBSubscriptionStatus();
+		$this->subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);		
 	}
 	
 	
-	public function cancelSubscription(){
+	public function cancelSubscription($cancelledBy = ''){
+	
+		if ($cancelledBy){
+		$this->cancelledBy = $cancelledBy;		
+		}
+		
 		$this->refID = 'BUCANCEL-UID-'.$this->userID;
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 	    $xml->ARBCancelSubscriptionRequest(array(
@@ -74,32 +77,12 @@ class billingUpdate{
 		
 		if ($xml->isSuccessful()){
 			update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'cancelled');
-			update_post_meta($this->subscriptionPostID, 'subscriptionCancelledBy', 'Customer');
+			update_post_meta($this->subscriptionPostID, 'subscriptionCancelledBy', $this->cancelledBy);
 			$this->response = 'Subscription Cancelled.';
 		}else{
-			$this->response = (string) 'Subscription Cancel Error: '.$xml->messages->message->text;
-			$this->dispatchUpdateErrorEmail();
+			$this->response = (string) 'Subscription Cancel Error: '.$xml->messages->message->text;			
 		}
 	}
-	
-	/*
-		Emails an alert to specified e-mail address for certain events. Mainly transaction failures etc.
-	*/
-	
-	public function dispatchUpdateErrorEmail(){		
-$body = $this->response.
-'
-Customer Name: '.$this->billingFirstName.' '.$this->billingLastName.'
-Customer E-mail: '.$this->billingEmail.'
-Customer Phone Number: '.$this->billingPhoneNumber.'
-
-Subscription ID: '.$this->subscriptionID.'
-Subscription Amount: '.$this->subscriptionAmount.'
-Subscription Status: '.$this->subscriptionStatus.'
-';
-		
-		wp_mail($this->apiEmail, 'Billing Update Error: '.$this->refID, $body);	
-	}	
 	
 	public function subscriptionDataArray(){	
 		//set us up the array		
@@ -181,7 +164,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
 		}else{
 			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;
-			$this->dispatchUpdateErrorEmail();
+			
 		}
 	}
 	
@@ -189,7 +172,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 	
 	public function processBillingUpdate(){
 	
-		if ($this->subscriptionStatus == 'error' && $this->arbSubscriptionStatus == 'suspended') {
+		if ($this->subscriptionStatus == 'suspended') {
 			/*
 				silent post returned error for this subscription and its been suspended on authorize.net
 				we need to update the payment information and authorize.net will try to charge again on the
@@ -198,20 +181,20 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->updateMethod = 'preauth';
 			$this->updateARBBilling();
 			
-		}else if ($this->subscriptionStatus == 'error' && $this->arbSubscriptionStatus == 'active') {
+		}else if ($this->subscriptionStatus == 'activeSuspended') {
 			/*
 				silent post returned an error on ARB and authorize.net did NOT suspend the subscription. So we now need to take payment for the missed payment and update the users card info on ARB and HERE
 			*/			
 			$this->updateMethod = 'capture';
 			$this->updateARBBilling();
 			
-		}else if ($this->subscriptionStatus == 'active' && $this->arbSubscriptionStatus == 'active'){
+		}else if ($this->subscriptionStatus == 'active'){
 			/*
 				there is no error at all and the incoming billing data is simply a billing update
 				we need to run the preauth, void, and then update ARB and our info here.
 			*/
 			$this->updateMethod = 'preauth';
-			$this->updateARBBilling();		
+			$this->updateARBBilling();
 		}
 	}
 	
@@ -316,7 +299,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
 		}else{
 			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;
-			$this->dispatchUpdateErrorEmail();
+			
 		}
 	}
 	
@@ -365,7 +348,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 		}else{
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
-			$this->dispatchUpdateErrorEmail();
+			
 		}
 	}
 	
@@ -415,7 +398,7 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 		}else{
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
-			$this->dispatchUpdateErrorEmail();
+			
 		}	
 	}
 	
@@ -435,25 +418,9 @@ Subscription Status: '.$this->subscriptionStatus.'
 			$this->voidCode = (string) $xml->transactionResponse->responseCode;
 		}else{
 			$this->response = (string) 'Void Error: '.$xml->messages->message->text;
-			$this->dispatchUpdateErrorEmail();
+			
 		}
 	}
-	
-	public function getARBSubscriptionStatus(){
-		$this->refID = 'ARB-STATUS-UID-'.$this->userID;
-		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
-		$xml->ARBGetSubscriptionStatusRequest(array(
-			'refId' => $this->refID,
-			'subscriptionId' => $this->subscriptionID
-		));	
-		
-		if ($xml->isSuccessful()){
-			$return = (string) $xml->status;
-		}else{
-			$return = 'request-failed';
-		}
-		return $return;
-	}	
 	
 }
 ?>

@@ -15,6 +15,46 @@ require_once('classes/billing.php');
 require_once('classes/billing_update.php');
 require_once('classes/sbd.php');
 
+
+/*
+Set up CRON
+*/
+add_action( 'cancelSuspended', 'doCancelSuspended' );
+
+if ( ! wp_next_scheduled( 'cancelSuspended' ) ) {
+  wp_schedule_event( time(), 'daily', 'cancelSuspended' );
+}
+
+/*
+Takes any subscription in activeSuspended or Suspended and checks to see if its been more then 7 days since its last update. If past 7 days we cancel the subscription automatically.
+*/
+
+function doCancelSuspended(){
+	$subscriptionsArray = array(
+						'post_type' => 'auth-subscriptions',
+						'posts_per_page' => -1,
+						'meta_query' => array(
+							array(
+								'key' => 'subscriptionStatus',
+								'value' => 'suspended',
+								'compare' => 'LIKE'
+							)		
+						)
+					);
+	$posts = get_posts($subscriptionsArray);
+	foreach ($posts as $p){
+		$subscriptionPostID = $p->ID;
+		$subscriptionStatus = get_post_meta($subscriptionPostID, 'subscriptionStatus', true);
+		$subscriptionLastBillingDate = get_post_meta($subscriptionPostID, 'subscriptionLastBillingDate', true);
+		$timeStamp = strtotime($subscriptionLastBillingDate);
+		if ($timeStamp <= strtotime('-7 days')){
+			 $billing = new billingUpdate($subscriptionPostID);
+			 $billing->cancelSubscription('System Cancelled');
+			 echo $billing->response;
+		}		
+	}
+}
+
 //add_action('admin_init', 'disableDashboard');
 function disableDashboard() {
   if (!current_user_can('manage_options') && $_SERVER['DOING_AJAX'] != '/wp-admin/admin-ajax.php') {

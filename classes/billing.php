@@ -58,25 +58,6 @@ class billing {
 	}
 	
 	/*
-		Emails an alert to specified e-mail address for certain events. Mainly transaction failures etc.
-	*/
-	
-	public function dispatchEmail(){		
-$body = $this->errorMessage.
-'
-Customer Name: '.$this->billingFirstName.' '.$this->billingLastName.'
-Customer E-mail: '.$this->billingEmail.'
-Customer Phone Number: '.$this->billingPhoneNumber.'
-
-Product Ordered: '.$this->productName.'
-Product Description: '.$this->productDescription.'
-Product Amount: '.$this->productAmount.'
-';
-		
-		wp_mail($this->apiEmail, 'Transaction Error: '.$this->refID, $body);	
-	}
-		
-	/*
 		This is the void function called during the ordering process
 	*/
 	public function processVoidTransaction(){
@@ -98,7 +79,6 @@ Product Amount: '.$this->productAmount.'
 			$message = (string) $xml->messages->message->text;			
 			$this->errorMessage = 'Void Error: '.$message;
 			$this->errorArray = array ('type' => 'Void Error', 'message' => $message);
-			$this->dispatchEmail();
 		}
 	}
 	
@@ -173,7 +153,6 @@ Product Amount: '.$this->productAmount.'
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
 			$this->errorMessage = 'Payment Error: '. $message;
 			$this->errorArray = array('type' => 'Payment Error', 'message' => $message);
-			$this->dispatchEmail();
 		}
 	}
 	
@@ -226,7 +205,7 @@ Product Amount: '.$this->productAmount.'
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
 			$this->errorMessage = 'Payment Error: '. $message;
 			$this->errorArray = array ('type' => 'Payment Error', 'message' => $message);
-			$this->dispatchEmail();
+
 		}
 	}
 
@@ -468,7 +447,6 @@ Product Amount: '.$this->productAmount.'
 			$message = (string) $xml->messages->message->text;
 			$this->errorMessage = 'Subscription Error: '.$message;
 			$this->errorArray = array ('type' => 'Subscription Error', 'message' => $message);
-			$this->dispatchEmail();		
 			
 			if ($this->billInitialPayment == 'on'){
 				//We already billed for this subscription but it failed to create. We now need to void the billing charge.
@@ -510,7 +488,6 @@ Product Amount: '.$this->productAmount.'
 			$message = $userID->get_error_message();
 			$this->errorMessage = 'Registration Error: '.$message;
 			$this->errorArray = array ('type' => 'Registration Error', 'message' => $message);
-			$this->dispatchEmail();
 		}
 		
 	}
