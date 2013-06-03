@@ -207,9 +207,9 @@ class sbd {
 			Subscription ID: [-subscriptionid-]\n
 			Payment Number: [-paymentnumber-]\n
 			";
-			$adminBody = $this->processEmailBody($body);
+			$adminBody = $this->processEmailBody($adminBody);
 			
-			wp_mail($this->apiEmail, $this->status, $adminBody);
+			wp_mail($this->apiEmail, $subject, $adminBody);
 		}
 		
 		//error emails			
@@ -223,7 +223,7 @@ class sbd {
 			Customer Phone: ".$this->x_phone."\n
 			Card Number: ".$this->x_account_number."\n
 			Amount: ".$this->x_amount."\n
-			";			
+			";
 		}
 		
 		if ($this->sendEmail == 'authCaptureError'){	
@@ -285,7 +285,7 @@ class sbd {
 			Card Number: ".$this->x_account_number."\n
 			Description: ".$this->x_description."\n
 			Amount: ".$this->x_amount."\n
-			";		
+			";
 		}		
 		
 		if ($this->sendEmail == 'credit'){	
