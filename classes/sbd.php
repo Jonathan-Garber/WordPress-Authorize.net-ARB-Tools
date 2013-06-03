@@ -70,8 +70,8 @@ class sbd {
 		$this->vtMD5 = strtoupper( md5( $this->hashKey . $this->vtUser . $this->x_trans_id . $this->x_amount ) );
 		
 		if ( $this->arbMD5 == $this->x_MD5_Hash || $this->aimMD5 == $this->x_MD5_Hash || $this->vtMD5 == $this->x_MD5_Hash ){		
-			$this->insertTransaction();			
-		}		
+			$this->insertTransaction();
+		}
 	}
 	
 	
@@ -86,8 +86,7 @@ class sbd {
 				
 				case 'void':
 					$this->status = 'Void Error: '.$this->x_response_reason_text;
-					$this->sendEmail = 'voidError';
-					
+					$this->sendEmail = 'voidError';					
 				BREAK;
 				
 				case 'auth_only':
@@ -212,9 +211,20 @@ class sbd {
 			wp_mail($this->apiEmail, $subject, $adminBody);
 		}
 		
-		//error emails			
+		//error emails		
+		if ($this->sendEmail == 'voidError'){			
+			$subject = get_bloginfo('name').' Transaction Void Error '.$this->x_trans_id;
+			$adminBody = 
+			"There was a error when attempting to void the following transaction.\n\n
+			".$this->status."\n\n
+			Transaction ID: ".$this->x_trans_id."\n
+			Card Type: ".$this->x_card_type."\n			
+			Card Number: ".$this->x_account_number."\n
+			";
+		}
+		
 		if ($this->sendEmail == 'authOnlyError'){			
-			$subject = get_bloginfo('name').' Card Authorization Error';
+			$subject = get_bloginfo('name').' Card Authorization Error '.$this->x_trans_id;
 			$adminBody = 
 			"There was a authorization error with the following information\n\n
 			".$this->status."\n\n
@@ -275,19 +285,16 @@ class sbd {
 		
 		//success emails
 		if ($this->sendEmail == 'void'){
-			$subject = get_bloginfo('name').' Void Approved';
+			$subject = get_bloginfo('name').' Void Approved '.$this->x_trans_id;
 			$adminBody = 
 			"There was a void issued for the following\n\n
 			
-			Customer Name: ".$this->x_first_name." ".$this->x_last_name."\n
-			Customer Email: ".$this->x_email."\n
-			Customer Phone: ".$this->x_phone."\n
+			Transaction ID: ".$this->x_trans_id."\n
+			Card Type: ".$this->x_card_type."\n			
 			Card Number: ".$this->x_account_number."\n
-			Description: ".$this->x_description."\n
-			Amount: ".$this->x_amount."\n
 			";
-		}		
-		
+		}
+
 		if ($this->sendEmail == 'credit'){	
 			$subject = get_bloginfo('name').' Refund Approved';
 			$adminBody = 
@@ -316,7 +323,7 @@ class sbd {
 
 		
 		if ($this->sendEmail == 'authOnly'){		
-			$subject = get_bloginfo('name').' Card Pre Authorization Approved';	
+			$subject = get_bloginfo('name').' Card Pre Authorization Approved '.$this->x_trans_id;	
 			$adminBody = 
 			"There was a pre authorization approved for the following\n\n
 			Customer Name: ".$this->x_first_name." ".$this->x_last_name."\n

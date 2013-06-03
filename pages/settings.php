@@ -3,6 +3,7 @@
 	Save Settings before calling class that does display so the new settings are caught when displaying
 */
 
+
 if (isset($_POST['saveAPISettings'])){
 	update_option('apiLogin', $_POST['apiLogin']);
 	update_option('apiKey', $_POST['apiKey']);
