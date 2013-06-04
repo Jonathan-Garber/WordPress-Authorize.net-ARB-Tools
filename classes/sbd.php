@@ -488,10 +488,11 @@ class sbd {
 					);
 						
 		$subscription = get_posts($subscriptionsArray);
-		$this->subscriptionPostID = $subscription[0]->ID;
-		
-		//update subscription post meta to match new data
-		$this->updateSubscriptionMeta();
+		$this->subscriptionPostID = $subscription[0]->ID;		
+		if (!$this->subscriptionPostID == ''){
+			//update subscription post meta to match new data
+			$this->updateSubscriptionMeta();
+		}
 	}
 	
 	public function updateSubscriptionMeta(){
@@ -500,11 +501,41 @@ class sbd {
 		$subscriptionLastBillingDate = get_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', true);
 		$subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
 		$subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);
-		$add = '+'.$subscriptionInterval.' '.$subscriptionUnit;		
+		$add = '+'.$subscriptionInterval.' '.$subscriptionUnit;
 		
 		$nextBillingDate = strtotime(date('Y-m-d', strtotime($subscriptionLastBillingDate)) . $add);
 		$this->NextBillingDate = date('Y-m-d', $nextBillingDate);
 	
+		//updates billing data for subscription
+		update_post_meta($this->subscriptionPostID, 'billingFirstName', $this->x_first_name);
+		update_post_meta($this->subscriptionPostID, 'billingLastName', $this->x_last_name);
+		update_post_meta($this->subscriptionPostID, 'billingEmail', $this->x_email);
+		update_post_meta($this->subscriptionPostID, 'billingCompany', $this->x_company);
+		update_post_meta($this->subscriptionPostID, 'billingPhoneNumber', $this->x_phone);
+		update_post_meta($this->subscriptionPostID, 'billingAddress', $this->x_address);
+		update_post_meta($this->subscriptionPostID, 'billingCity', $this->x_city);
+		update_post_meta($this->subscriptionPostID, 'billingState', $this->x_state);
+		update_post_meta($this->subscriptionPostID, 'billingZip', $this->x_zip);
+		update_post_meta($this->subscriptionPostID, 'billingCountry', $this->x_country);
+
+		//updates shipping data for subscription
+		update_post_meta($this->subscriptionPostID, 'shippingFirstName', $this->x_ship_to_first_name);
+		update_post_meta($this->subscriptionPostID, 'shippingLastName', $this->x_ship_to_last_name);
+		update_post_meta($this->subscriptionPostID, 'shippingCompany', $this->x_ship_to_company);
+		update_post_meta($this->subscriptionPostID, 'shippingAddress', $this->x_ship_to_address);
+		update_post_meta($this->subscriptionPostID, 'shippingCity', $this->x_ship_to_city);
+		update_post_meta($this->subscriptionPostID, 'shippingState', $this->x_ship_to_state);
+		update_post_meta($this->subscriptionPostID, 'shippingZip', $this->x_ship_to_zip);
+		update_post_meta($this->subscriptionPostID, 'shippingCountry', $this->x_ship_to_country);	
+		
+		//updates payment data for subscription
+		update_post_meta($this->subscriptionPostID, 'ccLastFour', $this->x_account_number);
+		update_post_meta($this->subscriptionPostID, 'subscriptionAmount', $this->x_amount);
+		
+		//updates core subscription data
+		update_post_meta($this->subscriptionPostID, 'subscriptionName', $this->x_description);
+		update_post_meta($this->subscriptionPostID, 'subscriptionInvoiceNumber', $this->x_invoice_num);
+
 		update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', $this->dateToday);
 		update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->NextBillingDate);
 		update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', $this->x_subscription_paynum);

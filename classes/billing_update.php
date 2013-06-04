@@ -162,7 +162,11 @@ class billingUpdate{
 		}	
 	}
 	
-	public function updateARBNoCC(){
+	public function updateARBNoCC($userID = false){
+		if ($userID){
+			$this->userID = $userID;
+		}
+		
 		$this->refID = 'BU-UID-'.$this->userID;
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->ARBUpdateSubscriptionRequest(array(
@@ -200,8 +204,7 @@ class billingUpdate{
 		if ($xml->isSuccessful()){
 			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
 		}else{
-			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;
-			
+			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;			
 		}
 	}
 	
