@@ -1,10 +1,7 @@
 <?php
 /*
-
-	Plugin Name: Authorize.net Subscription Management	
-	Description: Create & Manage Authorize.net Subscriptions & Payments	
-	Version: 0.0.0
-
+Plugin Name: WordPress Authorize.net ARB Tools
+Version: 1.0.0
 */
 
 /*
