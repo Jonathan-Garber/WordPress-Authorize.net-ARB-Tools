@@ -19,7 +19,6 @@ class billing {
 		
 		$this->cutOffDay = get_option('cutOffDay');
 		$this->startDay = get_option('startDay');
-		$this->thankYouPageID = get_option('thankYouPageID');
 
 		
 		$this->userFirstName = get_userdata($this->userID)->user_firstname;
@@ -258,14 +257,6 @@ class billing {
 					update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
 					update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '1');
 					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');
-					
-					//send em to the thank you page
-					$thankYouPageID = get_option('thankYouPageID');
-					
-					wp_redirect(
-									'/?page_id=' . $thankYouPageID .
-									'&subPostID=' . $this->subscriptionPostID
-								);
 				}
 			}
 			
@@ -287,14 +278,6 @@ class billing {
 					if ( strlen($this->subscriptionID) > 4 ){
 						//insert subscription post
 						$this->insertSubscription();
-					
-					//send em to the thank you page
-					$thankYouPageID = get_option('thankYouPageID');
-					
-					wp_redirect(
-									'/?page_id=' . $thankYouPageID .
-									'&subPostID=' . $this->subscriptionPostID
-								);
 					}
 				}
 			}
@@ -558,12 +541,9 @@ class billing {
 			<small>Orders placed before this day of the month are billed right away. 01-31</small><br/>
 			Day of Billing: <input type="text" name="startDay" value="%s"><br/>
 			<small>This is they day billing will occur each month for recurring orders. 01-31</small>
-			<br/><br/>
-			<h2>Page Settings</h2>
-			Thank You Page ID: <input type="text" name="thankYouPageID" value="%s"><br/>
-			<small>Enter the ID of the page you wish to use for your Thank-You page.</small><br/><br/>
+			<br/>
 			<input type="submit" name="saveAPISettings" value="Save Settings">
-		', $this->apiLogin, $this->apiKey, $this->apiEmail ,$this->hash, $apiTestMode, $this->vtUser, $this->cutOffDay, $this->startDay, $this->thankYouPageID );
+		', $this->apiLogin, $this->apiKey, $this->apiEmail ,$this->hash, $apiTestMode, $this->vtUser, $this->cutOffDay, $this->startDay );
 	
 	}
 

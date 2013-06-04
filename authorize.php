@@ -64,22 +64,7 @@ function disableDashboard() {
 register_activation_hook( __FILE__, 'registerPages' );
 
 function registerPages(){
-
-$thankYouPageID = get_option('thankYouPageID');
 $silentReturnPostID = get_option('silentReturnPostID');
-
-if ( empty($thankYouPageID) ){
-	$thankyou = array(
-	  'post_title'    => 'Thank You',
-	  'comment_status' => 'closed',
-	  'ping_status' => 'closed',
-	  'post_status'   => 'publish',
-	  'post_type' => 'page',
-	  'post_author'   => 1,
-	  'post_category' => array(0)
-	);
-}
-
 
 if ( empty($silentReturnPostID) ){
 	$silentReturn = array(
@@ -94,10 +79,7 @@ if ( empty($silentReturnPostID) ){
 }
 
 // Insert the post into the database
-$thankYouPageID = wp_insert_post( $thankyou );
 $silentReturnPostID = wp_insert_post( $silentReturn );
-
-update_option('thankYouPageID', $thankYouPageID);
 update_option('silentReturnPostID', $silentReturnPostID);
 
 }
