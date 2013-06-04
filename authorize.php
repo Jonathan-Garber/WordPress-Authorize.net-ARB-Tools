@@ -1,15 +1,11 @@
 <?php
 /*
-
-	Plugin Name: Authorize.net Subscription Management	
-	Description: Create & Manage Authorize.net Subscriptions & Payments	
-	Version: 0.0.0
-
+Plugin Name: WordPress Authorize.net ARB Tools
+Author: Jonathan-Garber, ryan.burnette
+Version: 1.0.0
 */
 
-/*
-Requires
-*/
+// Requires
 require_once('authorize/authorizeClasses.php');
 require_once('classes/billing.php');
 require_once('classes/billing_update.php');
