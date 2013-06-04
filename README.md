@@ -1,4 +1,4 @@
-WordPress-Authorize.net-ARB-Tools
+WordPress Authorize.net ARB Tools
 =================================
 
 WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
