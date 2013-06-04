@@ -257,6 +257,10 @@ class billing {
 					update_post_meta($this->subscriptionPostID, 'subscriptionNextBillingDate', $this->startDate);
 					update_post_meta($this->subscriptionPostID, 'subscriptionPaymentNumber', '1');
 					update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');
+					
+					//return variable so we know we can redirect
+					$this->transactionSuccess = 'true';
+					
 				}
 			}
 			
@@ -278,6 +282,8 @@ class billing {
 					if ( strlen($this->subscriptionID) > 4 ){
 						//insert subscription post
 						$this->insertSubscription();
+						$this->transactionSuccess = 'true';
+						
 					}
 				}
 			}
