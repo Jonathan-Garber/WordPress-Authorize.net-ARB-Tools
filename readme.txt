@@ -1,8 +1,6 @@
-=== Authorize.net Toolkit ===
+=== WordPress Authorize.net ARB Tools ===
 Author: TechStudio
 Contributors: Jonathan-Garber, ryan.burnette
-Requires at least: 3.3.1
-Tested up to: 3.4.2
+Requires at least: 3.5.1
+Tested up to: 3.5.1
 Stable tag: 1.0.0
-
-Authorize.net Toolkit. Allows for easy management of Authorize.net Payments & Subscriptions.
