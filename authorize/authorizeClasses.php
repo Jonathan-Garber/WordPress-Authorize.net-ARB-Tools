@@ -204,7 +204,7 @@ class AuthnetXML {
     	
 		if ($this->apiTestMode == ''){
 			curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 2);
-			curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '../../../wpat-cert/cert.pem');
+			curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '/../../../wpat-cert/cert.pem');
 		}
 		
         if(($this->response = curl_exec($this->ch)) !== false)
