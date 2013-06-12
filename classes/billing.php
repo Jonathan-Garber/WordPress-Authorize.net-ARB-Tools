@@ -12,6 +12,7 @@ class billing {
 		$this->apiLogin = get_option('apiLogin');
 		$this->apiEmail = get_option('apiEmail');
 		$this->apiKey = get_option('apiKey');
+    $this->apiHashEnable = get_option('apiHashEnable');
 		$this->hash = get_option('apiHash');
 		$this->vtUser = get_option('vtUser');
 		$this->apiTestMode = get_option('apiTestMode');
@@ -521,36 +522,6 @@ class billing {
 		update_user_meta($this->userID, 'ccMonth', $this->ccMonth);
 		update_user_meta($this->userID, 'ccYear', $this->ccYear);
 		
-	}
-	
-	/*
-		Settings form is drawn using this function
-	*/
-	public function settingsForm(){
-		
-		if ($this->apiTestMode == 'on'){
-			$apiTestMode = 'checked="checked"';
-		}
-		
-		printf('
-			<h2>Api Settings</h2>
-			<form method="POST">
-			API Login ID: <input type="text" name="apiLogin" value="%s"><br/>
-			API Transaction Key: <input type="text" name="apiKey" value="%s"><br/>
-			API Alert Email Address: <input type="text" name="apiEmail" value="%s"><br/>
-			API Hash Key: <input type="text" name="apiHash" value="%s"><br/>			
-			API Test Mode: <input %s type="checkbox" name="apiTestMode"><br/>
-			Virtual Terminal Username: <input type="text" name="vtUser" value="%s">
-			<br/><br/>
-			<h2>Billing Settings</h2>
-			Billing Cut Off Day: <input type="text" name="cutOffDay" value="%s"><br/>
-			<small>Orders placed before this day of the month are billed right away. 01-31</small><br/>
-			Day of Billing: <input type="text" name="startDay" value="%s"><br/>
-			<small>This is they day billing will occur each month for recurring orders. 01-31</small>
-			<br/>
-			<input type="submit" name="saveAPISettings" value="Save Settings">
-		', $this->apiLogin, $this->apiKey, $this->apiEmail ,$this->hash, $apiTestMode, $this->vtUser, $this->cutOffDay, $this->startDay );
-	
 	}
 
 	/*

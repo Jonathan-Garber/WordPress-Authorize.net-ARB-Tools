@@ -4,7 +4,7 @@ class sbd {
 	public function __construct($array){
 	
 		//MD5 Required Data
-		$this->hashKey = get_option('apiHash');
+		//$this->hashKey = get_option('apiHash');
 		$this->apiLogin = get_option('apiLogin');
 		$this->apiKey = get_option('apiKey');
 		$this->apiTestMode = get_option('apiTestMode');
@@ -54,12 +54,21 @@ class sbd {
 		$this->x_freight = $array['x_freight'];
 		$this->x_tax_exempt = $array['x_tax_exempt'];
 		$this->x_po_num = $array['x_po_num'];
-		$this->x_MD5_Hash = $array['x_MD5_Hash'];
+		//$this->x_MD5_Hash = $array['x_MD5_Hash'];
 		$this->x_cavv_response = $array['x_cavv_response'];
 		$this->x_test_request = $array['x_test_request'];
 		$this->x_subscription_id = $array['x_subscription_id'];
 		$this->x_subscription_paynum = $array['x_subscription_paynum'];
 		
+    $this->insertTransaction();
+
+    /**
+    * As of now, the MD5 hashing is always disabled. There is now an option in place
+    * to check whether this feature should be used or not. That condition needs to be
+    * checked before proceeding one way or the other.
+    */
+
+    /*
 		//ARB MD5
 		$this->arbMD5 = strtoupper( md5( $this->hashKey . $this->x_trans_id . $this->x_amount ) );
 
@@ -72,6 +81,8 @@ class sbd {
 		if ( $this->arbMD5 == $this->x_MD5_Hash || $this->aimMD5 == $this->x_MD5_Hash || $this->vtMD5 == $this->x_MD5_Hash ){		
 			$this->insertTransaction();
 		}
+    */
+    
 	}
 	
 	

@@ -32,19 +32,19 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 class AuthnetXMLException extends Exception {}
 
-class AuthnetXML
-{
-    const EXCEPTION_CURL = 10;
+class AuthnetXML {
+    
+  const EXCEPTION_CURL = 10;
 
-    private $ch;
-	private $login;
-    private $response;
-    private $response_xml;
-    private $results;
-    private $transkey;
-    private $url;
-    private $xml;
-	private $apiTestMode;
+  private $ch;
+  private $login;
+  private $response;
+  private $response_xml;
+  private $results;
+  private $transkey;
+  private $url;
+  private $xml;
+  private $apiTestMode;
 
 	public function __construct($login, $transkey, $test)
 	{
@@ -204,7 +204,7 @@ class AuthnetXML
     	
 		if ($this->apiTestMode == ''){
 			curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 2);
-			curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '/ssl/cert.pem');
+			curl_setopt($this->ch, CURLOPT_CAINFO, dirname(__FILE__) . '../../../wpat-cert/cert.pem');
 		}
 		
         if(($this->response = curl_exec($this->ch)) !== false)
