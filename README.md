@@ -12,6 +12,14 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 
+### 1.0.2
++ Minor documentation updates
++ Set up CK project
++ Added style/script mgmt
++ Cleaned up transactions page
++ Integrated jQuery DataTables
++ Added conditional for update routine
+
 ### 1.0.1
 + Added base of internal version tracking
 + Began adhering to style guide

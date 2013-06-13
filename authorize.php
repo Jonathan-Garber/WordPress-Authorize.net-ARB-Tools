@@ -2,48 +2,45 @@
 /*
 Plugin Name: WordPress Authorize.net ARB Tools
 Author: TechStudio
-Version: 1.0.1
+Author URI: http://techstudio.co
+Version: 1.0.2
+Description: WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
 */
 
+$plugins_url = plugins_url(false,__FILE__);
+
 // Version
-$wpat_version = '1.0.1';
+$wpat_version = '1.0.2';
+$wpat_previous_version = get_option('wpat_version');
+if ( $wpat_version != $wpat_previous_version ) {
+  // Update routines go here
+}
 update_option('wpat_version',$wpat_version);
 
-require_once('authorize/authorizeClasses.php');
-require_once('classes/billing.php');
-require_once('classes/billing_update.php');
-require_once('classes/sbd.php');
+// Includes
+include('authorize/authorizeClasses.php');
+include('classes/billing.php');
+include('classes/billing_update.php');
+include('classes/sbd.php');
 
-// WP_Cron
-function doCancelSuspended(){
-  $subscriptionsArray = array(
-    'post_type' => 'auth-subscriptions',
-    'posts_per_page' => -1,
-    'meta_query' => array(
-      array(
-        'key' => 'subscriptionStatus',
-        'value' => 'suspended',
-        'compare' => 'LIKE'
-      )   
-    )
-  );
-  $posts = get_posts($subscriptionsArray);
-  foreach ($posts as $p){
-    $subscriptionPostID = $p->ID;
-    $subscriptionStatus = get_post_meta($subscriptionPostID, 'subscriptionStatus', true);
-    $subscriptionLastBillingDate = get_post_meta($subscriptionPostID, 'subscriptionLastBillingDate', true);
-    $timeStamp = strtotime($subscriptionLastBillingDate);
-    if ($timeStamp <= strtotime('-7 days')){
-       $billing = new billingUpdate($subscriptionPostID);
-       $billing->cancelSubscription('System Cancelled');
-       echo $billing->response;
-    }   
+// Styles
+function wpat_styles() {
+  if ( strpos($_GET['page'],'wpat') !== false ) {
+    wp_enqueue_style('wpat-global-css', "/wp-content/plugins/WordPress-Authorize.net-ARB-Tools/assets/css/wpat.global.css", null, $wpat_version, 'screen');
+    wp_enqueue_style('wpat-data-tables-css', "/wp-content/plugins/WordPress-Authorize.net-ARB-Tools/assets/css/jquery.dataTables.css", null, $wpat_version, 'screen');
+    //wp_enqueue_style('wpat-data-tables-themeroller-css', "/wp-content/plugins/WordPress-Authorize.net-ARB-Tools/assets/css/jquery.dataTables_themeroller.css", null, $wpat_version, 'screen');
   }
 }
-add_action( 'cancelSuspended', 'doCancelSuspended' );
-if ( ! wp_next_scheduled( 'cancelSuspended' ) ) {
-  wp_schedule_event( time(), 'daily', 'cancelSuspended' );
+add_action('admin_init','wpat_styles');
+
+// Scripts
+function wpat_scripts() {
+  if ( strpos($_GET['page'],'wpat') !== false ) {
+    wp_enqueue_script('wpat-jquery-data-tables-js', "/wp-content/plugins/WordPress-Authorize.net-ARB-Tools/assets/js/jquery.dataTables.min.js", 'jquery', $wpat_version, true);
+    wp_enqueue_script('wpat-global-js', "/wp-content/plugins/WordPress-Authorize.net-ARB-Tools/assets/js/jquery.wpat.global.min.js", 'jquery', $wpat_version, true);
+  }
 }
+add_action('admin_init','wpat_scripts');
 
 // Register required pages
 function registerPages() {
@@ -164,5 +161,36 @@ function authRegisterPosts(){
 }
 add_action('init', 'authRegisterPosts');
 add_action('delete_post', 'authRegisterPosts');
+
+// Set up a WP_Cron that cancels aged subscriptions
+function doCancelSuspended(){
+  $subscriptionsArray = array(
+    'post_type' => 'auth-subscriptions',
+    'posts_per_page' => -1,
+    'meta_query' => array(
+      array(
+        'key' => 'subscriptionStatus',
+        'value' => 'suspended',
+        'compare' => 'LIKE'
+      )   
+    )
+  );
+  $posts = get_posts($subscriptionsArray);
+  foreach ($posts as $p){
+    $subscriptionPostID = $p->ID;
+    $subscriptionStatus = get_post_meta($subscriptionPostID, 'subscriptionStatus', true);
+    $subscriptionLastBillingDate = get_post_meta($subscriptionPostID, 'subscriptionLastBillingDate', true);
+    $timeStamp = strtotime($subscriptionLastBillingDate);
+    if ($timeStamp <= strtotime('-7 days')){
+       $billing = new billingUpdate($subscriptionPostID);
+       $billing->cancelSubscription('System Cancelled');
+       echo $billing->response;
+    }   
+  }
+}
+add_action( 'cancelSuspended', 'doCancelSuspended' );
+if ( ! wp_next_scheduled( 'cancelSuspended' ) ) {
+  wp_schedule_event( time(), 'daily', 'cancelSuspended' );
+}
 
 ?>

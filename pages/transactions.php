@@ -8,109 +8,108 @@ $transactions = get_posts(
 );
 ?>
 
-<style type="text/css">
-  .wpat-transactions {
-  }
-  .wpat-transactions .filters h4 {
-    padding: 0;
-    margin: 0;
-  }
-  .wpat-transactions tr.hover {
-    background-color: white;
-  }
-  .wpat-transactions tr.expanded {
-    display: none;
-  }
-  .wpat-transactions span.expand {
-    margin-left: 2px;
-  }
-  .wpat-transactions span.expand, .wpat-transactions span.expand-all {
-    font-weight: bold;
-    padding: 1px 3px;
-  }
-  .wpat-transactions span.expand:hover, .wpat-transactions span.expand-all:hover {
-    cursor: pointer;
-    background-color: red;
-    color: white;
-  }
-</style>
-
-<div class="wrap wpat-transactions">
+<div class="wrap wpat-wrap wpat-transactions">
   
   <div class="title">
     <h2>Transactions</h2>
   </div>
 
-  <br/><br/>
+  <br/>
 
-  <table class="widefat">
+  <div class="aux-toolbar">
+    <h5>Toggle Columns</h5>
+    <div class="switches">
+      <button id="column-<?php echo $i=0; ?>" class="active">Post ID</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Date/Time</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Transaction ID</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Invoice Number</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing First Name</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Last Name</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Email</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Company</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Phone Number</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Address</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing City</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing State</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Zip</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Country</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping First Name</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping Last Name</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping Company</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping Address</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping City</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping State</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping Zip</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Shipping Country</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Card Last Four</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Status</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Transaction Type</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Amount</button>
+    </div>
+  </div>
+
+  <br/>
+
+  <table>
     <thead>
       <tr>
-        <th><span class="expand-all">+</span></th>
-        <th>Date</th>
         <th>Post ID</th>
+        <th>Date/Time</th>
         <th>Transaction ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Type</th>
+        <th>Invoice Number</th>
+        <th>Billing First Name</th>
+        <th>Billing Last Name</th>
+        <th>Billing Email</th>
+        <th>Billing Company</th>
+        <th>Billing Phone Number</th>
+        <th>Billing Address</th>
+        <th>Billing City</th>
+        <th>Billing State</th>
+        <th>Billing Zip</th>
+        <th>Billing Country</th>
+        <th>Shipping First Name</th>
+        <th>Shipping Last Name</th>
+        <th>Shipping Company</th>
+        <th>Shipping Address</th>
+        <th>Shipping City</th>
+        <th>Shipping State</th>
+        <th>Shipping Zip</th>
+        <th>Shipping Country</th>
+        <th>Card Last Four</th>
+        <th>Status</th>
+        <th>Transaction Type</th>
         <th>Amount</th>
-        <th>Card</th>
       </tr>
     </thead>
-    <tfoot>
-      <tr>
-        <th><span class="expand-all">+</span></th>
-        <th>Date</th>
-        <th>Post ID</th>
-        <th>Transaction ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Type</th>
-        <th>Amount</th>
-        <th>Card</th>
-      </tr>
-    </tfoot>
     <tbody>
       <?php foreach ( $transactions as $t ) : ?>
-      <tr id="t-<?php echo $t->ID; ?>" class="primary">
-        <td><span class="expand">+</span></td>
-        <td><?php echo get_post_meta($t->ID,'transactionDate',true); ?></td>
+      <tr id="transaction-<?php echo $t->ID; ?>">
         <td><?php echo $t->ID; ?></td>
+        <td><?php echo get_post_time("F j, Y, g:i a",false,$t->ID); ?></td>
         <td><?php echo get_post_meta($t->ID,'transactionID',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'transactionInvoiceNumber',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'billingFirstName',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'billingLastName',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'billingEmail',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingCompany',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingPhoneNumber',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingAddress',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingCity',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingState',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingZip',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'billingCountry',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingFirstName',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingLastName',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingCompany',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingAddress',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingCity',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingState',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingZip',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'shippingCountry',true); ?></td>
+        <td><?php echo str_replace('XXXX', '', get_post_meta($t->ID,'ccLastFour',true)); ?></td>
+        <td><?php echo get_post_meta($t->ID,'status',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'transactionType',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'transactionAmount',true); ?></td>
-        <td><?php echo str_replace('XXXX', '*', get_post_meta($t->ID,'ccLastFour',true)); ?></td>
-      </tr>
-      <tr id="te-<?php echo $t->ID; ?>" class="expanded">
-        <td class="expanded" colspan="10">
-          <p>
-            <strong>Billing</strong><br>
-            Phone Number: <?php echo get_post_meta($t->ID,'billingPhoneNumber',true); ?><br>
-            Company: <?php echo get_post_meta($t->ID,'billingCompany',true); ?><br>
-            Address: <?php echo get_post_meta($t->ID,'billingAddress',true); ?><br>
-            City: <?php echo get_post_meta($t->ID,'billingCity',true); ?><br>
-            State: <?php echo get_post_meta($t->ID,'billingState',true); ?><br>
-            Zip: <?php echo get_post_meta($t->ID,'billingZip',true); ?><br>
-            Country: <?php echo get_post_meta($t->ID,'billingCountry',true); ?><br>
-            <strong>Shipping</strong><br>
-            First Name: <?php echo get_post_meta($t->ID,'shippingFirstName',true); ?><br>
-            Last Name: <?php echo get_post_meta($t->ID,'shippingLastName',true); ?><br>
-            Company: <?php echo get_post_meta($t->ID,'shippingCompany',true); ?><br>
-            Address: <?php echo get_post_meta($t->ID,'shippingAddress',true); ?><br>
-            City: <?php echo get_post_meta($t->ID,'shippingCity',true); ?><br>
-            State: <?php echo get_post_meta($t->ID,'shippingState',true); ?><br>
-            Zip: <?php echo get_post_meta($t->ID,'shippingZip',true); ?><br>
-            Country: <?php echo get_post_meta($t->ID,'shippingCountry',true); ?><br>
-            <strong>Transaction</strong><br>
-            Invoice #: <?php echo get_post_meta($t->ID,'transactionInvoiceNumber',true); ?><br>
-            Status: <?php echo get_post_meta($t->ID,'status',true); ?>
-          </p>
-        </td>
       </tr>
       <?php endforeach; ?>
 
@@ -120,37 +119,3 @@ $transactions = get_posts(
   <br/><br/>
 
 </div>
-
-<script type="text/javascript">
-
-  var wpat_transactions = {
-    el: {
-      hovers: jQuery('.wpat-transactions table tbody tr.primary'),
-      expand: jQuery('.wpat-transactions span.expand'),
-      expand_all: jQuery('.wpat-transactions span.expand-all')
-    },
-    init_expansion: function() {
-      this.el.expand.on('click', function() {
-        wpat_transactions.el.expand_all.unbind('click').removeClass('expand-all');
-        var t = jQuery(this).parents('tr').attr('id'),
-            te = t.replace('t-','te-');
-        if ( jQuery('#'+te).hasClass('expanded') == true ) {
-          jQuery(this).html('-');
-          jQuery('#'+te).removeClass('expanded');
-          return false;
-        }
-        jQuery(this).html('+');
-        jQuery('#'+te).addClass('expanded');
-        return false;
-      });
-      this.el.expand_all.on('click', function() {
-        wpat_transactions.el.expand.click();
-      });
-    }
-  };
-
-  jQuery(document).ready(function($) {
-    wpat_transactions.init_expansion();
-  });
-
-</script>
