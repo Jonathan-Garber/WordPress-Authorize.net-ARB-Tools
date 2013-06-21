@@ -507,15 +507,4 @@
     "displayValueWasSetByUser" : 0,
     "compassEnabled" : 1
   }
-},
-    "lessDebugStyle" : 0,
-    "javascriptAutoOutputPathRelativePath" : "",
-    "slimAutoOutputPathStyle" : 0
-  },
-  "projectAttributes" : {
-    "bourbonEnabled" : 0,
-    "displayValue" : "WordPress-Authorize.net-ARB-Tools",
-    "displayValueWasSetByUser" : 0,
-    "compassEnabled" : 1
-  }
 }

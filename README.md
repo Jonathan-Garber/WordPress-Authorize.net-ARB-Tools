@@ -12,6 +12,9 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 
+### 1.0.3.1
++ Fixed a styling bug in data tables
+
 ### 1.0.3
 + Users no longer see a FOBUC on data table loading, just a "Loading..." message
 + Added Subscriptions page
