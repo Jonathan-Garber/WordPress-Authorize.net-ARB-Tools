@@ -50,7 +50,9 @@ $transactions = get_posts(
 
   <br/>
 
-  <table>
+  <span class="loading-message">Loading...</span>
+
+  <table class="wpat-transactions not-loaded data">
     <thead>
       <tr>
         <th>Post ID</th>

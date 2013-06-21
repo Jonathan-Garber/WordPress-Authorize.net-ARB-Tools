@@ -12,6 +12,10 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 
+### 1.0.3
++ Users no longer see a FOBUC on data table loading, just a "Loading..." message
++ Added Subscriptions page
+
 ### 1.0.2
 + Minor documentation updates
 + Set up CK project
@@ -25,7 +29,7 @@ Version History
 + Began adhering to style guide
 + Removed subscription management functions (unused)
 + Reorganized menus
-+ Added transaction review page
++ Added Transactions page
 + Auth-processors post type always displays
 + PEM file now resides outside plugin
 + Added md5 hash enable option, not integrated

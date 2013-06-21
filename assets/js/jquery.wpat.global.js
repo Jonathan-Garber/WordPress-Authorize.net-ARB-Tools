@@ -2,22 +2,27 @@ jQuery(document).ready(function($) {
   
   var wpat = {
     el: {
-      transactionsTable: $('.wpat-transactions table'),
-      switches: $('.wpat-transactions .aux-toolbar .switches button')
+      wpatDataTable: $('.wpat-wrap table.data'),
+      switches: $('.wpat-wrap .aux-toolbar .switches button'),
+      loadingMessage: $('.loading-message')
     },
     initDataTables: function() {
-      this.el.transactionsTable.dataTable({
+      this.el.wpatDataTable.dataTable({
         "aaSorting": [[ 0, "desc" ]],
         "iDisplayLength": 50,
         "sScrollX": "100%"
       });
+      $(window).on('load',function() {
+        wpat.el.loadingMessage.remove();
+        $('.not-loaded').removeClass('not-loaded');
+      });
     },
     fnShowHide: function(iCol) {
-      var oTable = wpat.el.transactionsTable.dataTable();
+      var oTable = wpat.el.wpatDataTable.dataTable();
       var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
       oTable.fnSetColumnVis( iCol, bVis ? false : true );
     },
-    transactionsTableColumnToggle: function() {
+    initColumnToggle: function() {
       this.el.switches.each(function() {
         if ( $(this).hasClass('active') == false ) {
           var dCol = $(this).attr('id').replace('column-','');
@@ -34,6 +39,6 @@ jQuery(document).ready(function($) {
   };
 
   wpat.initDataTables();
-  wpat.transactionsTableColumnToggle();
+  wpat.initColumnToggle();
 
 });

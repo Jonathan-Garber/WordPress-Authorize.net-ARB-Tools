@@ -3,14 +3,14 @@
 Plugin Name: WordPress Authorize.net ARB Tools
 Author: TechStudio
 Author URI: http://techstudio.co
-Version: 1.0.2
+Version: 1.0.3
 Description: WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
 */
 
 $plugins_url = plugins_url(false,__FILE__);
 
 // Version
-$wpat_version = '1.0.2';
+$wpat_version = '1.0.3';
 $wpat_previous_version = get_option('wpat_version');
 if ( $wpat_version != $wpat_previous_version ) {
   // Update routines go here
@@ -75,29 +75,23 @@ function pageTemplates($single) {
 add_filter('single_template', 'pageTemplates');
 
 // Pages
-function wpat_settings(){
+function wpat_settings() {
   include 'pages/settings.php';
 }
-function wpat_transactions(){
+function wpat_transactions() {
   include 'pages/transactions.php';
+}
+function wpat_subscriptions() {
+  include 'pages/subscriptions.php';
 }
 
 // Menus
 function wpat_menu() {
   add_menu_page('WordPress Authorize.net ARB Tools - Settings', 'ARB', 'manage_options', 'wpat', 'wpat_settings');
   add_submenu_page('wpat', 'WordPress Authorize.net ARB Tools - Transactions', 'Transactions', 'manage_options', 'wpat-transactions', 'wpat_transactions');
+  add_submenu_page('wpat', 'WordPress Authorize.net ARB Tools - Subscriptions', 'Subscriptions', 'manage_options', 'wpat-subscriptions', 'wpat_subscriptions');
 }
 add_action('admin_menu', 'wpat_menu');
-
-
-
-
-/*
-* Future stufff
-function authSubs(){
-	include 'pages/subscriptions.php';
-}
-*/
 
 // Register custom post types
 function authRegisterPosts(){
