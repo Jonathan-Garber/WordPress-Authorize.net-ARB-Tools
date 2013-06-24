@@ -11,6 +11,9 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 
 Version History
 ---------------
+### 1.0.4.1
++ 1.0.4 patch for transaction status did not work as intended. Re-worked and patched again
++ Adjusted billing update functions to ensure transactions are associated with the same invoice number as original order
 
 ### 1.0.4
 + Fixed bugs related to identifying transcation status on auth.net returns
