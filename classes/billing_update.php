@@ -176,7 +176,9 @@ class billingUpdate{
 						'customer' => array(
 							'id' => $this->userID,
 						)
+					)
 				));
+				
 		}else{
 			$xml->ARBUpdateSubscriptionRequest(array(
 				'refId' => $this->refID,
