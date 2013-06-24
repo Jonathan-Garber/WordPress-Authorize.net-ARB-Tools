@@ -164,44 +164,52 @@ class billingUpdate{
 	}
 	
 	public function updateARBNoCC($userID = false){
-		if ($userID){
-			$this->userID = $userID;
-		}
-		
 		$this->refID = 'BU-UID-'.$this->userID;
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
-		$xml->ARBUpdateSubscriptionRequest(array(
-			'refId' => $this->refID,
-			'subscriptionId' => $this->subscriptionID,
-			'subscription' => array(
-				'customer' => array(
-					'id' => $this->userID,
-					'email' => $this->billingEmail,
-					'phoneNumber' => $this->billingPhoneNumber,
-				),
-				'billTo' => array(
-					'firstName' => $this->billingFirstName,
-					'lastName' => $this->billingLastName,
-					'company' => $this->billingCompany,
-					'address' => $this->billingAddress,
-					'city' => $this->billingCity,
-					'state' => $this->billingState,
-					'zip' => $this->billingZip,
-					'country' => $this->billingCountry,
-				),
-				'shipTo' => array(
-					'firstName' => $this->shippingFirstName,
-					'lastName' => $this->shippingLastName,
-					'company' => $this->shippingCompany,
-					'address' => $this->shippingAddress,
-					'city' => $this->shippingCity,
-					'state' => $this->shippingState,
-					'zip' => $this->shippingZip,
-					'country' => $this->shippingCountry,
-				)				
-			),
-		));
 		
+		if ($userID){
+			$this->userID = $userID;
+				$xml->ARBUpdateSubscriptionRequest(array(
+					'refId' => $this->refID,
+					'subscriptionId' => $this->subscriptionID,
+					'subscription' => array(
+						'customer' => array(
+							'id' => $this->userID,
+						)
+				));
+		}else{
+			$xml->ARBUpdateSubscriptionRequest(array(
+				'refId' => $this->refID,
+				'subscriptionId' => $this->subscriptionID,
+				'subscription' => array(
+					'customer' => array(
+						'id' => $this->userID,
+						'email' => $this->billingEmail,
+						'phoneNumber' => $this->billingPhoneNumber,
+					),
+					'billTo' => array(
+						'firstName' => $this->billingFirstName,
+						'lastName' => $this->billingLastName,
+						'company' => $this->billingCompany,
+						'address' => $this->billingAddress,
+						'city' => $this->billingCity,
+						'state' => $this->billingState,
+						'zip' => $this->billingZip,
+						'country' => $this->billingCountry,
+					),
+					'shipTo' => array(
+						'firstName' => $this->shippingFirstName,
+						'lastName' => $this->shippingLastName,
+						'company' => $this->shippingCompany,
+						'address' => $this->shippingAddress,
+						'city' => $this->shippingCity,
+						'state' => $this->shippingState,
+						'zip' => $this->shippingZip,
+						'country' => $this->shippingCountry,
+					)				
+				),
+			));	
+		}		
 		if ($xml->isSuccessful()){
 			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
 		}else{
