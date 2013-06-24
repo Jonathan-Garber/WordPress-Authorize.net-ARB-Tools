@@ -59,6 +59,7 @@ class billingUpdate{
 		$this->ccYear = get_post_meta($this->subscriptionPostID, 'ccYear', true);
 		$this->subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
 		$this->subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);		
+		$this->transactionInvoiceNumber = get_post_meta($this->subscriptionPostID, 'subscriptionInvoiceNumber', true);
 	}
 	
 	
@@ -242,14 +243,14 @@ class billingUpdate{
 	
 		if ($this->updateMethod == 'capture'){
 			$this->updateBillingCapture();
-			
-			if ( !empty($this->transactionID) ){
+
+		if ($this->responseCode == '1'){		
 					$this->updateARB();
 				}
 				
 		}else{
 			$this->updateBillingPreAuth();			
-			if ( !empty($this->transactionID) ){
+		if ($this->responseCode == '1'){
 				$this->voidBillingPreAuth();			
 				if ($this->voidCode == '1'){
 					$this->updateARB();
@@ -344,7 +345,6 @@ class billingUpdate{
 	}
 	
 	public function updateBillingPreAuth(){
-		$this->transactionInvoiceNumber = rand(1000000, 100000000).'-UID-'.$this->userID;
 		$this->refID = 'BPA-UID-'.$this->userID;
 		$this->description = 'Pre-Auth for Billing Update';
 			
@@ -384,7 +384,9 @@ class billingUpdate{
 			),
 		));
 
-		if ($xml->isSuccessful()){
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 		}else{
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
@@ -394,7 +396,6 @@ class billingUpdate{
 	
 	public function updateBillingCapture(){
 		//This will attempt to charge the user during updating billing data and then update the arb data and subscription here with new info
-		$this->transactionInvoiceNumber = rand(1000000, 100000000).'-UID-'.$this->userID;
 		$this->refID = 'BUP-RECAP-UID-'.$this->userID;
 		$this->description = 'Recapturing Missed ARB Payment';
 			
@@ -434,7 +435,9 @@ class billingUpdate{
 			),
 		));
 
-		if ($xml->isSuccessful()){
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 		}else{
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;	
@@ -453,7 +456,9 @@ class billingUpdate{
 			),
 		));
 		
-		if ($xml->isSuccessful()){
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
 			$this->voidCode = (string) $xml->transactionResponse->responseCode;
 		}else{
 			$this->response = (string) 'Void Error: '.$xml->messages->message->text;

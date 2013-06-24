@@ -60,9 +60,6 @@ class billing {
 		
 		//new tracking with reference ID to ensure we can associate ALL steps of the order process to each other properly
 		$this->uniqueID = uniqid('00'); //You have to set uniqueID in its own variable here
-		
-		//invoice number is unique and used to associate all portions of the transaction being run together.
-		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
 		$this->refID = $this->uniqueID;
 		
 	}
@@ -70,7 +67,10 @@ class billing {
 	/*
 		This is the void function called during the ordering process
 	*/
-	public function processVoidTransaction(){		
+	public function processVoidTransaction(){
+		//invoice number is unique and used to associate all portions of the transaction being run together.
+		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
+		
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -80,8 +80,10 @@ class billing {
 			),
 		));
 		
-		if ($xml->isSuccessful()){
-			$this->voidCode = (string) $xml->transactionResponse->responseCode;
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
+			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{
 			$message = (string) $xml->messages->message->text;			
 			$this->errorMessage = 'Void Error: '.$message;
@@ -93,7 +95,9 @@ class billing {
 		Runs after submitted order/payment data this is ONLY for processing initital payments on subscriptions that start at a later date. this only authorizes the amount. We capture after the subscription is successfully created.
 	*/
 	
-	public function processInitialPayment(){			
+	public function processInitialPayment(){
+		//invoice number is unique and used to associate all portions of the transaction being run together.
+		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;	
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -151,7 +155,9 @@ class billing {
 			),
 		));
 
-		if ($xml->isSuccessful()){
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
 			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
@@ -163,7 +169,9 @@ class billing {
 	/*
 		Runs pre-auth and void on CC info for 0.01cent
 	*/	
-	public function processPreAuth(){			
+	public function processPreAuth(){
+		//invoice number is unique and used to associate all portions of the transaction being run together.
+		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;	
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -200,7 +208,9 @@ class billing {
 			),
 		));
 
-		if ($xml->isSuccessful()){
+		$this->responseCode = (string) $xml->transactionResponse->responseCode;
+		
+		if ($this->responseCode == '1'){
 			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{			
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
@@ -242,7 +252,7 @@ class billing {
 			$this->processInitialPayment();
 			
 			//Processing Initial Payment sets TransID upon success & the proper startDate into the variable
-			if ( $this->transactionID != '' || $this->transactionID != 0 ){
+			if ($this->responseCode == '1'){
 				
 				//trans ID and new startDate are configured so we can continue with creating the subscription
 				$this->createSubscription();
@@ -268,14 +278,13 @@ class billing {
 		}else{
 			$this->processPreAuth();
 			
-			//Preauth sets TransID upon success
-			if ( $this->transactionID != '' || $this->transactionID != 0 ){
-				$this->voidReason = 'Pre-Authorization Void';
-				
-				
+			//Preauth sets response code to 1 upon success
+			if ($this->responseCode == '1'){
+				$this->voidReason = 'Pre-Authorization Void';				
 				$this->processVoidTransaction();
 				
-				if ($this->voidCode == '1'){
+				//voiding sets the response code variable to 1 upon success if it fails response will not equal 1
+				if ($this->responseCode == '1'){
 					$this->createSubscription();						
 					
 					//create subscription sets a subscription ID upon success
@@ -373,7 +382,9 @@ class billing {
 		}
 	}
 	
-	public function createSubscription(){		
+	public function createSubscription(){
+		//invoice number is unique and used to associate all portions of the transaction being run together.
+		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->ARBCreateSubscriptionRequest(array(
 			'refId' => $this->refID,
