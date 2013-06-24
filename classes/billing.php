@@ -12,11 +12,13 @@ class billing {
 		$this->apiLogin = get_option('apiLogin');
 		$this->apiEmail = get_option('apiEmail');
 		$this->apiKey = get_option('apiKey');
-    $this->apiHashEnable = get_option('apiHashEnable');
+		$this->apiHashEnable = get_option('apiHashEnable');
 		$this->hash = get_option('apiHash');
 		$this->vtUser = get_option('vtUser');
 		$this->apiTestMode = get_option('apiTestMode');
 		$this->userID = get_current_user_id();
+		
+		$this->apiReporting = 'on'; //Harcoded for now. optional later in settings
 		
 		$this->cutOffDay = get_option('cutOffDay');
 		$this->startDay = get_option('startDay');
@@ -54,16 +56,21 @@ class billing {
 		$this->shippingCity = get_user_meta($this->userID, 'shippingCity', true);
 		$this->shippingState = get_user_meta($this->userID, 'shippingState', true);
 		$this->shippingZip = get_user_meta($this->userID, 'shippingZip', true);
-		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);		
+		$this->shippingCountry = get_user_meta($this->userID, 'shippingCountry', true);
+		
+		//new tracking with reference ID to ensure we can associate ALL steps of the order process to each other properly
+		$this->uniqueID = uniqid('00'); //You have to set uniqueID in its own variable here
+		
+		//invoice number is unique and used to associate all portions of the transaction being run together.
+		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
+		$this->refID = $this->uniqueID;
+		
 	}
 	
 	/*
 		This is the void function called during the ordering process
 	*/
-	public function processVoidTransaction(){
-		$this->refID = 'VOID-UID-'.$this->userID;
-		$this->adminName = 'SYSTEM';
-		
+	public function processVoidTransaction(){		
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -86,10 +93,7 @@ class billing {
 		Runs after submitted order/payment data this is ONLY for processing initital payments on subscriptions that start at a later date. this only authorizes the amount. We capture after the subscription is successfully created.
 	*/
 	
-	public function processInitialPayment(){
-		$this->invoiceNumber = rand(1000000, 100000000).'-UID-'.$this->userID;
-		$this->refID = 'IP-UID-'.$this->userID;
-			
+	public function processInitialPayment(){			
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -159,10 +163,7 @@ class billing {
 	/*
 		Runs pre-auth and void on CC info for 0.01cent
 	*/	
-	public function processPreAuth(){	
-		$this->invoiceNumber = rand(1000000, 100000000).'-UID-'.$this->userID;
-		$this->refID = 'PA-UID-'.$this->userID;
-			
+	public function processPreAuth(){			
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->createTransactionRequest(array(
 			'refId' => $this->refID,
@@ -205,7 +206,6 @@ class billing {
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
 			$this->errorMessage = 'Payment Error: '. $message;
 			$this->errorArray = array ('type' => 'Payment Error', 'message' => $message);
-
 		}
 	}
 
@@ -242,7 +242,7 @@ class billing {
 			$this->processInitialPayment();
 			
 			//Processing Initial Payment sets TransID upon success & the proper startDate into the variable
-			if ($this->transactionID != ''){
+			if ( $this->transactionID != '' || $this->transactionID != 0 ){
 				
 				//trans ID and new startDate are configured so we can continue with creating the subscription
 				$this->createSubscription();
@@ -269,22 +269,22 @@ class billing {
 			$this->processPreAuth();
 			
 			//Preauth sets TransID upon success
-			if ($this->transactionID != ''){
-				$this->voidReason = 'Pre-Authorization Void';			
+			if ( $this->transactionID != '' || $this->transactionID != 0 ){
+				$this->voidReason = 'Pre-Authorization Void';
+				
+				
 				$this->processVoidTransaction();
 				
-				//voiding sets the voided variable to 1 upon success
 				if ($this->voidCode == '1'){
-					$this->createSubscription();
+					$this->createSubscription();						
 					
 					//create subscription sets a subscription ID upon success
 					//We use string length to be double sure we have a ID number by making sure the variable is numeric and longer then 4 digits minimal. This ensures we do not have some resultCode or error code by mistake in the variable
-					
+						
 					if ( strlen($this->subscriptionID) > 4 ){
 						//insert subscription post
 						$this->insertSubscription();
 						$this->transactionSuccess = 'true';
-						
 					}
 				}
 			}
@@ -373,10 +373,7 @@ class billing {
 		}
 	}
 	
-	public function createSubscription(){
-		$this->refID = 'SUB-UID-'.$this->userID;
-		$this->invoiceNumber = 'SUB-'.rand(1000000, 100000000).'-UID-'.$this->userID;
-		
+	public function createSubscription(){		
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
 		$xml->ARBCreateSubscriptionRequest(array(
 			'refId' => $this->refID,

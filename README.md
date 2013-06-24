@@ -12,6 +12,12 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 
+### 1.0.4
++ Fixed bugs related to identifying transcation status on auth.net returns
++ Rearranged so that invoice numbers can be matched between transactions and subscriptions to establish relationship between the two
++ MD5 hashing of auth.net returns can be be enabled or disabled
++ Transactions are now analyzed to determine which are handled and which are orphans, admin emails are no longer sent for orphans
+
 ### 1.0.3.1
 + Fixed a styling bug in data tables
 

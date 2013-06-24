@@ -14,7 +14,6 @@ if ( isset($_POST['saveAPISettings']) ) {
 }
 
 $settings = new billing();
-
 ?>
 
 <style type="text/css">
