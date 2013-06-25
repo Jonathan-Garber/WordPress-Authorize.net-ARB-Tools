@@ -11,6 +11,11 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 
 Version History
 ---------------
+
+### 1.0.4.2
++ RB: Change subscriptions page default active columns
++ JG: Added addonData handling to billingUpdate class
+
 ### 1.0.4.1
 + 1.0.4 patch for transaction status did not work as intended. Re-worked and patched again
 + Adjusted billing update functions to ensure transactions are associated with the same invoice number as original order

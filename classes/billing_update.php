@@ -303,6 +303,13 @@ class billingUpdate{
 		update_post_meta($this->subscriptionPostID, 'ccMonth', $this->ccMonth);
 		update_post_meta($this->subscriptionPostID, 'ccYear', $this->ccYear);
 		
+		//take additional form data and add it to subscription meta
+		if ( is_array( $this->addonData ) ){
+			foreach ($this->addonData as $k => $v){
+				update_post_meta($this->subscriptionPostID, $k, $v);
+			}			
+		}	
+		
 	}
 	
 	public function updateARB(){

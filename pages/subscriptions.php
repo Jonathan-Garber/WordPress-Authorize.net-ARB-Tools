@@ -25,12 +25,12 @@ $subscriptions = get_posts(
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Last Name</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Email</button>
       <button id="column-<?php echo $i = $i+1; ?>">Billing Company</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Phone Number</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Address</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing City</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing State</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Zip</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Country</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Phone Number</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Address</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing City</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing State</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Zip</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Billing Country</button>
       <button id="column-<?php echo $i = $i+1; ?>">Shipping First Name</button>
       <button id="column-<?php echo $i = $i+1; ?>">Shipping Last Name</button>
       <button id="column-<?php echo $i = $i+1; ?>">Shipping Company</button>

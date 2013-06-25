@@ -372,9 +372,7 @@ class billing {
 		update_post_meta($this->subscriptionPostID, 'subscriptionStatus', 'active');		
 		
 		//take additional form data and add it to subscription meta
-		if ( is_array( $this->addonData ) ){
-			update_post_meta($this->subscriptionPostID, 'subscriptionAddonData', $this->addonData);
-			
+		if ( is_array( $this->addonData ) ){			
 			foreach ($this->addonData as $k => $v){
 				update_post_meta($this->subscriptionPostID, $k, $v);
 			}
@@ -1007,9 +1005,7 @@ class billing {
 		$array[subscriptionLastBillingDate] = get_post_meta($this->postID, 'subscriptionLastBillingDate', true);
 		$array[subscriptionNextBillingDate] = get_post_meta($this->postID, 'subscriptionNextBillingDate', true);
 		$array[subscriptionPaymentNumber] = get_post_meta($this->postID, 'subscriptionPaymentNumber', true);
-		$array[subscriptionStatus] = get_post_meta($this->postID, 'subscriptionStatus', true);
-		$array[subscriptionAddonData] = get_post_meta($this->postID, 'subscriptionAddonData', true);
-		
+		$array[subscriptionStatus] = get_post_meta($this->postID, 'subscriptionStatus', true);		
 		return $array;
 	}
 	
