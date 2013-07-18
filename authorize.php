@@ -3,14 +3,14 @@
 Plugin Name: WordPress Authorize.net ARB Tools
 Author: TechStudio
 Author URI: http://techstudio.co
-Version: 1.0.4.2
+Version: 1.0.5
 Description: WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
 */
 
 $plugins_url = plugins_url(false,__FILE__);
 
 // Version
-$wpat_version = '1.0.4.2';
+$wpat_version = '1.0.5';
 $wpat_previous_version = get_option('wpat_version');
 if ( $wpat_version != $wpat_previous_version ) {
   // Update routines go here
@@ -22,6 +22,7 @@ include('authorize/authorizeClasses.php');
 include('classes/billing.php');
 include('classes/billing_update.php');
 include('classes/sbd.php');
+include('functions/functions.php');
 
 // Styles
 function wpat_styles() {
@@ -165,23 +166,50 @@ function doCancelSuspended(){
       array(
         'key' => 'subscriptionStatus',
         'value' => 'suspended',
-        'compare' => 'LIKE'
+        'compare' => '=='
       )   
     )
   );
   $posts = get_posts($subscriptionsArray);
-  foreach ($posts as $p){
-    $subscriptionPostID = $p->ID;
-    $subscriptionStatus = get_post_meta($subscriptionPostID, 'subscriptionStatus', true);
-    $subscriptionLastBillingDate = get_post_meta($subscriptionPostID, 'subscriptionLastBillingDate', true);
-    $timeStamp = strtotime($subscriptionLastBillingDate);
-    if ($timeStamp <= strtotime('-7 days')){
-       $billing = new billingUpdate($subscriptionPostID);
-       $billing->cancelSubscription('System Cancelled');
-       echo $billing->response;
-    }   
-  }
+  $successCount = 0;
+  $failedCount = 0;
+	foreach ($posts as $p){		
+		$subscriptionPostID = $p->ID;
+		$subscriptionID = get_post_meta($subscriptionPostID, 'subscriptionID', true);
+		$arbStatus = wpat_getARBSubscriptionStatus($subscriptionID);
+		
+		if ($arbStatus == 'active'){						
+			$firstName = get_post_meta($subscriptionPostID, 'billingFirstName', true);
+			$lastName = get_post_meta($subscriptionPostID, 'billingLastName', true);
+			$email = get_post_meta($subscriptionPostID, 'billingEmail', true);
+			
+			$subscriptionStatus = get_post_meta($subscriptionPostID, 'subscriptionStatus', true);
+			$subscriptionLastBillingDate = get_post_meta($subscriptionPostID, 'subscriptionLastBillingDate', true);	
+			$timeStamp = strtotime($subscriptionLastBillingDate);
+
+			if ($timeStamp <= strtotime('-7 days')){
+				$subscriptionList .= "Subscription ID: ".$subscriptionID."\n";
+				$subscriptionList .= "Name: ".$firstName." ".$lastName."\n";
+				$subscriptionList .= "Email: ".$email."\n";
+				
+				$billing = new billingUpdate($subscriptionPostID);
+				$billing->cancelSubscription('System Canceled');
+				if ($billing->authResponse == 'canceled'){
+					$successCount++;
+					$subscriptionList .= "Response: Canceled\n\n";
+				}else{
+					$failedCount++;
+					$subscriptionList .= "Response: FAILED TO CANCEL\n\n";
+				}
+			}		
+		}
+	}	
+	$apiEmail = get_option('apiEmail');
+	$subject = "Daily Subscription Cancelation Report ".date('m-d-Y H:m:s A');
+	$message = "The following subscriptions have been automatically canceled due to their suspension status. Any subscription marked suspended for more then 7 days from the last billing date are automatically canceled.\n\nCanceled Successfully: ".$successCount."\n\nFailed to Cancel: ".$failedCount."\n\n".$subscriptionList;
+	wp_mail($apiEmail,$subject,$message);
 }
+
 add_action( 'cancelSuspended', 'doCancelSuspended' );
 if ( ! wp_next_scheduled( 'cancelSuspended' ) ) {
   wp_schedule_event( time(), 'daily', 'cancelSuspended' );

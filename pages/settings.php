@@ -101,3 +101,13 @@ $settings = new billing();
   </div><!-- /wpat-settings-form -->
 
 </div><!-- /wrap -->
+
+<?php
+/*
+$post = get_post(1139);
+$id = $post->post_author;
+echo $id;
+$userdata = get_userdata($id);
+echo $userdata->user_login;
+*/
+?>

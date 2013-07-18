@@ -121,16 +121,21 @@ class sbd {
 						on both cases we will alert the customer to the issue. request they update billing data. if no update occurs within set amount of days in settings we then auto-cancel their subscription.
 						
 					*/
-						$arbStatus = $this->getARBSubscriptionStatus();
+					
+					/*
+						//original code to check status fails here because arb status is not updated real-time in auth.net
+						$arbStatus = $this->getARBSubscriptionStatus();						
 							if ($arbStatus == 'suspended'){
 								$this->subscriptionStatus = 'suspended';
 							}
 							
 							if($arbStatus == 'active'){
 								$this->subscriptionStatus = 'activeSuspended';
-							}
-							
-							$this->sendEmail = 'arbCaptureError';
+							}							
+					*/
+						$this->sendEmail = 'arbCaptureError';
+						$this->subscriptionStatus = 'suspended';
+					
 					}
 				BREAK;
 			}		
@@ -177,11 +182,11 @@ class sbd {
 		/*
 			Orphan Check
 		*/		
-		if ( $this->x_cust_id == '' || $this->x_cust_id == 0){
+		if ( !get_userdata($this->x_cust_id) ){
 			//No customer id so we orphan and assign default author
 			$this->x_cust_id = '1';
 			$this->orphan = 'yes';
-			
+
 			if ($this->x_response_code == 2 || $this->x_response_code == 3  || $this->x_response_code == 4){
 				if ( !empty($this->x_subscription_id) ){
 					$this->orphanType = 'arb-error';
@@ -580,22 +585,6 @@ class sbd {
 			update_post_meta($this->subscriptionPostID, 'orphan', 'true');
 			update_post_meta($this->subscriptionPostID, 'orphanType', $this->orphanType);
 		}
-	}
-	
-	public function getARBSubscriptionStatus(){
-		$this->refID = $this->x_cust_id;
-		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
-		$xml->ARBGetSubscriptionStatusRequest(array(
-			'refId' => $this->refID,
-			'subscriptionId' => $this->x_subscription_id
-		));	
-		
-		if ($xml->isSuccessful()){
-			$return = (string) $xml->status;
-		}else{
-			$return = 'request-failed';
-		}
-		return $return;
 	}
 
 }
