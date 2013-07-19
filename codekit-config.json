@@ -1,6 +1,6 @@
 {
   "CodeKitInfo" : "This is a CodeKit project configuration file. It is designed to sync project settings across multiple machines. Modifying the contents of this file can be a poor life decision if you don't know what you're doing. This file is not useful unless accompanied by the project that created it in CodeKit. For more information, see: http:\/\/incident57.com\/codekit",
-  "creatorBuild" : "8300",
+  "creatorBuild" : "8317",
   "files" : {
     "\/assets\/js\/jquery.wpat.global.min.js" : {
       "ignoreWasSetByUser" : 0,
@@ -24,24 +24,6 @@
       "initialSize" : 1361,
       "fileType" : 8192
     },
-    "\/assets\/css\/jquery.dataTables_themeroller.css" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables_themeroller.css",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 16
-    },
-    "\/authorize.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/authorize.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/assets\/js\/jquery.wpat.global.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -52,170 +34,6 @@
       "syntaxCheckerStyle" : 1,
       "outputAbbreviatedPath" : "\/assets\/js\/jquery.wpat.global.min.js",
       "fileType" : 64
-    },
-    "\/assets\/images\/sort_asc.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/sort_asc.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/sort_asc.png",
-      "initialSize" : 1118,
-      "fileType" : 8192
-    },
-    "\/assets\/images\/sort_desc_disabled.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/sort_desc_disabled.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/sort_desc_disabled.png",
-      "initialSize" : 1045,
-      "fileType" : 8192
-    },
-    "\/pages\/settings.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/pages\/settings.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/assets\/images\/sort_asc_disabled.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/sort_asc_disabled.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/sort_asc_disabled.png",
-      "initialSize" : 1050,
-      "fileType" : 8192
-    },
-    "\/assets\/sass\/jquery.dataTables_themeroller.scss" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/sass\/jquery.dataTables_themeroller.scss",
-      "outputStyle" : 0,
-      "shouldRunBless" : 0,
-      "outputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables_themeroller.css",
-      "fileType" : 4,
-      "debugStyle" : 0
-    },
-    "\/classes\/sbd.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/classes\/sbd.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/assets\/sass\/jquery.dataTables.scss" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/sass\/jquery.dataTables.scss",
-      "outputStyle" : 0,
-      "shouldRunBless" : 0,
-      "outputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables.css",
-      "fileType" : 4,
-      "debugStyle" : 0
-    },
-    "\/authorize\/sbd.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/authorize\/sbd.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/assets\/images\/forward_disabled.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/forward_disabled.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/forward_disabled.png",
-      "initialSize" : 1363,
-      "fileType" : 8192
-    },
-    "\/assets\/images\/sort_desc.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/sort_desc.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/sort_desc.png",
-      "initialSize" : 1127,
-      "fileType" : 8192
-    },
-    "\/assets\/images\/back_enabled.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/back_enabled.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/back_enabled.png",
-      "initialSize" : 1379,
-      "fileType" : 8192
-    },
-    "\/pages\/transactions.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/pages\/transactions.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/authorize\/authorizeClasses.php" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/authorize\/authorizeClasses.php",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/assets\/images\/back_enabled_hover.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/back_enabled_hover.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/back_enabled_hover.png",
-      "initialSize" : 1375,
-      "fileType" : 8192
-    },
-    "\/config.rb" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/config.rb",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 32768
-    },
-    "\/assets\/css\/jquery.dataTables.css" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables.css",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 16
     },
     "\/assets\/images\/forward_enabled_hover.png" : {
       "ignoreWasSetByUser" : 0,
@@ -228,6 +46,15 @@
       "initialSize" : 1379,
       "fileType" : 8192
     },
+    "\/pages\/settings.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/pages\/settings.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
     "\/assets\/images\/forward_enabled.png" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -239,12 +66,39 @@
       "initialSize" : 1380,
       "fileType" : 8192
     },
-    "\/classes\/billing.php" : {
+    "\/assets\/css\/wpat.global.css" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/css\/wpat.global.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
+    },
+    "\/authorize\/sbd.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/classes\/billing.php",
+      "inputAbbreviatedPath" : "\/authorize\/sbd.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/classes\/sbd.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/classes\/sbd.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/functions\/functions.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/functions\/functions.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
@@ -259,14 +113,90 @@
       "outputAbbreviatedPath" : "\/assets\/js\/jquery.dataTables.min.js",
       "fileType" : 64
     },
-    "\/example-templates\/auth-manage-subscriptions.php" : {
+    "\/assets\/sass\/jquery.dataTables.scss" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/example-templates\/auth-manage-subscriptions.php",
+      "inputAbbreviatedPath" : "\/assets\/sass\/jquery.dataTables.scss",
+      "outputStyle" : 0,
+      "shouldRunBless" : 0,
+      "outputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables.css",
+      "fileType" : 4,
+      "debugStyle" : 0
+    },
+    "\/config.rb" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/config.rb",
       "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
+      "fileType" : 32768
+    },
+    "\/assets\/images\/sort_desc_disabled.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/sort_desc_disabled.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/sort_desc_disabled.png",
+      "initialSize" : 1045,
+      "fileType" : 8192
+    },
+    "\/assets\/images\/sort_both.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/sort_both.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/sort_both.png",
+      "initialSize" : 1136,
+      "fileType" : 8192
+    },
+    "\/assets\/images\/back_enabled.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/back_enabled.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/back_enabled.png",
+      "initialSize" : 1379,
+      "fileType" : 8192
+    },
+    "\/assets\/images\/sort_asc_disabled.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/sort_asc_disabled.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/sort_asc_disabled.png",
+      "initialSize" : 1050,
+      "fileType" : 8192
+    },
+    "\/assets\/css\/jquery.dataTables.css" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
+    },
+    "\/assets\/js\/jquery.dataTables.min.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/js\/jquery.dataTables.min.js",
+      "outputStyle" : 1,
+      "syntaxCheckerStyle" : 1,
+      "outputAbbreviatedPath" : "\/assets\/js\/jquery.dataTables.min.min.js",
+      "fileType" : 64
     },
     "\/assets\/sass\/wpat.global.sass" : {
       "ignoreWasSetByUser" : 0,
@@ -280,34 +210,54 @@
       "fileType" : 2,
       "debugStyle" : 0
     },
-    "\/example-templates\/auth-subscribe-form.php" : {
+    "\/pages\/transactions.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/example-templates\/auth-subscribe-form.php",
+      "inputAbbreviatedPath" : "\/pages\/transactions.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/assets\/js\/jquery.dataTables.min.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 1,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/js\/jquery.dataTables.min.js",
-      "outputStyle" : 1,
-      "syntaxCheckerStyle" : 1,
-      "outputAbbreviatedPath" : "\/assets\/js\/jquery.dataTables.min.min.js",
-      "fileType" : 64
-    },
-    "\/example-templates\/auth-thank-you.php" : {
+    "\/classes\/billing.php" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/example-templates\/auth-thank-you.php",
+      "inputAbbreviatedPath" : "\/classes\/billing.php",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
+    },
+    "\/assets\/images\/sort_desc.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/sort_desc.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/sort_desc.png",
+      "initialSize" : 1127,
+      "fileType" : 8192
+    },
+    "\/authorize.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/authorize.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/assets\/images\/back_enabled_hover.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/back_enabled_hover.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/back_enabled_hover.png",
+      "initialSize" : 1375,
+      "fileType" : 8192
     },
     "\/classes\/billing_update.php" : {
       "ignoreWasSetByUser" : 0,
@@ -318,16 +268,93 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/assets\/images\/sort_both.png" : {
+    "\/assets\/sass\/jquery.dataTables_themeroller.scss" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/assets\/images\/sort_both.png",
+      "inputAbbreviatedPath" : "\/assets\/sass\/jquery.dataTables_themeroller.scss",
+      "outputStyle" : 0,
+      "shouldRunBless" : 0,
+      "outputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables_themeroller.css",
+      "fileType" : 4,
+      "debugStyle" : 0
+    },
+    "\/example-templates\/auth-thank-you.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/example-templates\/auth-thank-you.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/authorize\/authorizeClasses.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/authorize\/authorizeClasses.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/assets\/css\/jquery.dataTables_themeroller.css" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 1,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/css\/jquery.dataTables_themeroller.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
+    },
+    "\/assets\/images\/forward_disabled.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/forward_disabled.png",
       "processed" : 0,
-      "outputAbbreviatedPath" : "\/assets\/images\/sort_both.png",
-      "initialSize" : 1136,
+      "outputAbbreviatedPath" : "\/assets\/images\/forward_disabled.png",
+      "initialSize" : 1363,
       "fileType" : 8192
+    },
+    "\/example-templates\/auth-manage-subscriptions.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/example-templates\/auth-manage-subscriptions.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/example-templates\/auth-subscribe-form.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/example-templates\/auth-subscribe-form.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/assets\/images\/sort_asc.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/assets\/images\/sort_asc.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/assets\/images\/sort_asc.png",
+      "initialSize" : 1118,
+      "fileType" : 8192
+    },
+    "\/pages\/subscriptions.php" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/pages\/subscriptions.php",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     }
   },
   "manualImportLinks" : [
@@ -348,7 +375,10 @@
     "sassAutoOutputPathStyle" : 2,
     "stylusAutoOutputPathReplace2" : "css",
     "lessAutoOutputPathStyle" : 2,
+    "lessIECompatibility" : 1,
     "genericWebpageFileExtensionsString" : "html, htm, shtml, shtm, xhtml, php, jsp, asp, aspx, erb, ctp",
+    "lessStrictUnits" : 0,
+    "lessStrictMath" : 0,
     "coffeeMinifyOutput" : 1,
     "javascriptOutputSuffix" : ".min",
     "jadeOutputStyle" : 0,
@@ -497,6 +527,7 @@
     "jadeCompileDebug" : 1,
     "slimRailsCompatible" : 0,
     "kitAutoOutputPathReplace2" : "",
+    "lessRelativeURLS" : 0,
     "lessDebugStyle" : 0,
     "javascriptAutoOutputPathRelativePath" : "",
     "slimAutoOutputPathStyle" : 0

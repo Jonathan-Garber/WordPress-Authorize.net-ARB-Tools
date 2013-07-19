@@ -12,6 +12,9 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 
+### 1.0.6
++ Show subscriptionCancelledBy and subscriptionCanceledDate date fields on Subscriptions page
+
 ### 1.0.5
 + Undocumented
 
