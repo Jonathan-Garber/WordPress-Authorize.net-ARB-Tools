@@ -55,8 +55,8 @@ $subscriptions = get_posts(
       <button id="column-<?php echo $i = $i+1; ?>">Subscription Next Billing Date</button>
       <button id="column-<?php echo $i = $i+1; ?>">Subscription Payment Number</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Subscription Status</button>
-      <button id="column-<?php echo $i = $i+1; ?>">Subscription Cancelled By</button>
-      <button id="column-<?php echo $i = $i+1; ?>">Subscription Cancelled Date</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Subscription Canceled By</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Subscription Canceled Date</button>
     </div>
   </div>
 
