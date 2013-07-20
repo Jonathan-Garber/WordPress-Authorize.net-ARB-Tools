@@ -146,7 +146,7 @@ $subscriptions = get_posts(
         <td><?php echo get_post_meta($t->ID,'subscriptionNextBillingDate',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'subscriptionPaymentNumber',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'subscriptionStatus',true); ?></td>
-        <td><?php echo get_post_meta($t->ID,'subscriptionCancelledBy',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'subscriptionCanceledBy',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'subscriptionCanceledDate',true); ?></td>
       </tr>
       <?php endforeach; ?>
