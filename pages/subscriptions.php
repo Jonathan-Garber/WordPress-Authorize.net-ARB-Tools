@@ -55,6 +55,8 @@ $subscriptions = get_posts(
       <button id="column-<?php echo $i = $i+1; ?>">Subscription Next Billing Date</button>
       <button id="column-<?php echo $i = $i+1; ?>">Subscription Payment Number</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Subscription Status</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Subscription Canceled By</button>
+      <button id="column-<?php echo $i = $i+1; ?>">Subscription Canceled Date</button>
     </div>
   </div>
 
@@ -101,6 +103,8 @@ $subscriptions = get_posts(
         <th>Subscription Next Billing Date</th>
         <th>Subscription Payment Number</th>
         <th>Subscription Status</th>
+        <th>Cancelled By</th>
+        <th>Cancelled Date</th>
       </tr>
     </thead>
     <tbody>
@@ -142,6 +146,8 @@ $subscriptions = get_posts(
         <td><?php echo get_post_meta($t->ID,'subscriptionNextBillingDate',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'subscriptionPaymentNumber',true); ?></td>
         <td><?php echo get_post_meta($t->ID,'subscriptionStatus',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'subscriptionCanceledBy',true); ?></td>
+        <td><?php echo get_post_meta($t->ID,'subscriptionCanceledDate',true); ?></td>
       </tr>
       <?php endforeach; ?>
 
