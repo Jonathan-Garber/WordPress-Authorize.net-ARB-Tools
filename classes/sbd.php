@@ -297,19 +297,19 @@ class sbd {
 			Amount: ".$this->x_amount."\n
 			";
 				
-			$body = "
-			Hello [-fullname-],\n\n
-			We attempted to process payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
-			Subscription Id: [-subscriptionid-]\n
-			Product or Service: [-productdescription-]\n\n
-			Amount: [-productamount-]\n\n
-			We tried to process this payment with the card you have on file.\n
-			Card Type: [-billingcardtype-]\n
-			Card Number: [-billingcardnumber-]\n\n
-			There was an error returned with the following message.\n
-			[-errormessage-]\n\n
-			Subscriptions that fail to process a payment require a billing information update. You can do this via your account management tools on site. You must update your billing information with a valid credit card before 7 days from the date of the suspension or the subscription will be cancelled automatically.
-			";
+$body = "
+Hello [-fullname-],\n\n
+We attempted to process payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
+Subscription Id: [-subscriptionid-]\n
+Product or Service: [-productdescription-]\n\n
+Amount: [-productamount-]\n\n
+We tried to process this payment with the card you have on file.\n
+Card Type: [-billingcardtype-]\n
+Card Number: [-billingcardnumber-]\n\n
+There was an error returned with the following message.\n
+[-errormessage-]\n\n
+Subscriptions that fail to process a payment require a billing information update. You can do this via your account management tools on site. You must update your billing information with a valid credit card before 7 days from the date of the suspension or the subscription will be cancelled automatically.
+";
 			$subject = apply_filters('arbCaptureErrorSubject',$subject);
 			$body = apply_filters('arbCaptureErrorBody',$body);			
 			$body = $this->processEmailBody($body);
@@ -340,12 +340,12 @@ class sbd {
 			Amount: ".$this->x_amount."\n
 			";
 			
-			$body = "
-			Hello [-fullname-],\n\n
-			We have processed a refund for [-productdescription-] for the following amount [-productamount-] to the card we have on file.\n\n
-			Card Type: [-billingcardtype-]\n
-			Card Number: [-billingcardnumber-]
-			";
+$body = "
+Hello [-fullname-],\n\n
+We have processed a refund for [-productdescription-] for the following amount [-productamount-] to the card we have on file.\n\n
+Card Type: [-billingcardtype-]\n
+Card Number: [-billingcardnumber-]
+";
 			
 			$subject = apply_filters('creditSuccessSubject',$subject);
 			$body = apply_filters('creditSuccessBody',$body);
@@ -378,15 +378,15 @@ class sbd {
 			Amount: ".$this->x_amount."\n
 			";
 			
-			$body = "
-			Hello [-fullname-],\n\n
-			We have processed a payment for [-productdescription-] in the following amount [-productamount-] to your credit card.\n\n
-			Card Type: [-billingcardtype-]\n
-			Card Number: [-billingcardnumber-]\n\n
-			Your payment was successful & we wanted to thank you for your business.\n
-			If you have any questions or concerns please feel free to reply to this e-mail or check our website for other options.\n\n
-			[-emailsignature-]
-			";
+$body = "
+Hello [-fullname-],\n\n
+We have processed a payment for [-productdescription-] in the following amount [-productamount-] to your credit card.\n\n
+Card Type: [-billingcardtype-]\n
+Card Number: [-billingcardnumber-]\n\n
+Your payment was successful & we wanted to thank you for your business.\n
+If you have any questions or concerns please feel free to reply to this e-mail or check our website for other options.\n\n
+[-emailsignature-]
+";
 			
 			$subject = apply_filters('authCaptureSuccessSubject',$subject);
 			$body = apply_filters('authCaptureSuccessBody',$body);
@@ -408,16 +408,16 @@ class sbd {
 			Amount: ".$this->x_amount."\n
 			";
 			
-			$body = "
-			Hello [-fullname-],\n\n
-			We have processed payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
-			Subscription Id: [-subscriptionid-]\n
-			Product or Service: [-productdescription-]\n\n
-			Amount: [-productamount-]\n\n
-			We tried to process this payment with the card you have on file.\n
-			Card Type: [-billingcardtype-]\n
-			Card Number: [-billingcardnumber-]\n\n
-			";
+$body = "
+Hello [-fullname-],\n\n
+We have processed payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
+Subscription Id: [-subscriptionid-]\n
+Product or Service: [-productdescription-]\n\n
+Amount: [-productamount-]\n\n
+We processed this payment with the card you have on file.\n
+Card Type: [-billingcardtype-]\n
+Card Number: [-billingcardnumber-]\n\n
+";
 			
 			$subject = apply_filters('arbAuthCaptureSuccessSubject',$subject);
 			$body = apply_filters('arbAuthCaptureSuccessBody',$body);
