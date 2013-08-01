@@ -299,7 +299,7 @@ class sbd {
 				
 $body = "
 Hello [-fullname-],\n\n
-We attempted to process payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
+We attempted to process a payment in the amount of [-productamount-] for the following subscription.\n\n
 Subscription Id: [-subscriptionid-]\n
 Product or Service: [-productdescription-]\n\n
 Amount: [-productamount-]\n\n
@@ -410,7 +410,7 @@ If you have any questions or concerns please feel free to reply to this e-mail o
 			
 $body = "
 Hello [-fullname-],\n\n
-We have processed payment number [-paymentnumber-] in the amount of [-productamount-] for the following subscription.\n\n
+We have processed a payment in the amount of [-productamount-] for the following subscription.\n\n
 Subscription Id: [-subscriptionid-]\n
 Product or Service: [-productdescription-]\n\n
 Amount: [-productamount-]\n\n
