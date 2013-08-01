@@ -1,6 +1,7 @@
 <?php
 $transactions = get_posts(
   array(
+    'author' => '-1',
     'posts_per_page'  => -1,
     'post_type'       => 'auth-transactions',
     'post_status'     => 'publish'
