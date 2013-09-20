@@ -599,7 +599,10 @@ class billingUpdate{
 
 		update_post_meta($this->subscriptionPostID, 'ccYear', $this->ccYear);
 
-		
+		//if the update method was CAPTURE then we captured a missed ARB and need to update the lastbillingdate to reflect that
+		if ($this->updateMethod == 'capture'){
+			update_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', date('Y-m-01') );
+		}
 
 		//take additional form data and add it to subscription meta
 

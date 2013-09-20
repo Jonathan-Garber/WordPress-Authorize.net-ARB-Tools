@@ -1,7 +1,7 @@
 <?php
-if (isset($_POST['x_response_code'])){
+if ( isset($_POST) ){
 	$sbd = new sbd($_POST);
 }else{
-wp_redirect('/');
+	echo 'nothing to see here - move along';
 }
 ?>

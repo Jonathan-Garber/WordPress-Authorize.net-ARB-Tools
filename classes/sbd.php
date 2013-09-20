@@ -539,6 +539,12 @@ Card Number: [-billingcardnumber-]\n\n
 	
 		//figure next billing date
 		$subscriptionLastBillingDate = get_post_meta($this->subscriptionPostID, 'subscriptionLastBillingDate', true);
+
+		//if this sub does not have a last billing date that means it has not billed yet this is the FIRST time. So we set the date to the first of the current month
+		if ( empty($subscriptionLastBillingDate) ){
+			$subscriptionLastBillingDate = date('Y-m-01');
+		}
+
 		$subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
 		$subscriptionUnit = get_post_meta($this->subscriptionPostID, 'subscriptionUnit', true);
 		$add = '+'.$subscriptionInterval.' '.$subscriptionUnit;

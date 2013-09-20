@@ -11,6 +11,9 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 
 Version History
 ---------------
+### 1.0.7
++ Adjusted auto cancel routine to ensure all suspended subscriptions regardless of their authorize.net status are canceled.
++ Adjusted "Next Billing Date" calculations to fix an error that occurred when a subscription was on its initial billing cycle.
 
 ### 1.0.6
 + Show subscriptionCancelledBy and subscriptionCanceledDate date fields on Subscriptions page
@@ -54,6 +57,15 @@ Version History
 + Reorganized menus
 + Added Transactions page
 + Auth-processors post type always displays
++ PEM file now resides outside plugin
++ Added md5 hash enable option, not integrated
++ MD5 hashing temporarily always disabled
++ Settings form no longer drawn from billing class
++ Styled settings page
+
+### 1.0.0
++ Initial release
+ post type always displays
 + PEM file now resides outside plugin
 + Added md5 hash enable option, not integrated
 + MD5 hashing temporarily always disabled

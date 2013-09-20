@@ -3,14 +3,14 @@
 Plugin Name: WordPress Authorize.net ARB Tools
 Author: TechStudio
 Author URI: http://techstudio.co
-Version: 1.0.6
+Version: 1.0.7
 Description: WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
 */
 
 $plugins_url = plugins_url(false,__FILE__);
 
 // Version
-$wpat_version = '1.0.6';
+$wpat_version = '1.0.7';
 $wpat_previous_version = get_option('wpat_version');
 if ( $wpat_version != $wpat_previous_version ) {
   // Update routines go here
@@ -71,7 +71,7 @@ function pageTemplates($single) {
 
 	if ( is_single( $silentReturnPostID ) ) {
 		return $dir . '/sbd.php';
-	}	
+	}
 }
 add_filter('single_template', 'pageTemplates');
 
@@ -176,9 +176,9 @@ function doCancelSuspended(){
 	foreach ($posts as $p){		
 		$subscriptionPostID = $p->ID;
 		$subscriptionID = get_post_meta($subscriptionPostID, 'subscriptionID', true);
-		$arbStatus = wpat_getARBSubscriptionStatus($subscriptionID);
+		//$arbStatus = wpat_getARBSubscriptionStatus($subscriptionID);
+		//removed if ARB Status statement that was from line 181 to 203
 		
-		if ($arbStatus == 'active'){						
 			$firstName = get_post_meta($subscriptionPostID, 'billingFirstName', true);
 			$lastName = get_post_meta($subscriptionPostID, 'billingLastName', true);
 			$email = get_post_meta($subscriptionPostID, 'billingEmail', true);
@@ -201,8 +201,7 @@ function doCancelSuspended(){
 					$failedCount++;
 					$subscriptionList .= "Response: FAILED TO CANCEL\n\n";
 				}
-			}		
-		}
+			}
 	}	
 	$apiEmail = get_option('apiEmail');
 	$subject = "Daily Subscription Cancelation Report ".date('m-d-Y H:m:s A');

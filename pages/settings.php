@@ -104,10 +104,38 @@ $settings = new billing();
 
 <?php
 /*
-$post = get_post(1139);
-$id = $post->post_author;
-echo $id;
-$userdata = get_userdata($id);
-echo $userdata->user_login;
+$post = get_post(4505);
+$id = $post->ID;
+$author = $post->post_author;
+echo $author;
 */
+
+/*
+$subscriptions = get_posts(
+  array(
+    'posts_per_page'  => -1,
+    'post_type'       => 'auth-subscriptions',
+    'post_status'     => 'publish',
+    'meta_query' => array(
+      array (
+        'key' => 'subscriptionStatus',
+        'value' => 'active',
+        'compare' => '==',
+      ),
+      array (
+        'key' => 'subscriptionLastBillingDate',
+        'value' => '2013-09-01',
+        'compare' => '<',
+      ),
+    ),
+  )
+);
+
+$count = 0;
+foreach ($subscriptions as $value){
+   $postID = $value->ID;
+    update_post_meta($postID, 'subscriptionLastBillingDate', date('Y-m-01') )
+}
+*/
+
 ?>
