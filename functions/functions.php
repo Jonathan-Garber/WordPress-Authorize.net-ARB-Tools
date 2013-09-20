@@ -1,13 +1,13 @@
 <?php
-function sb_encrypt_user_id($userId){
+function wpat_encrypt_user_id($userId){
 return $userId + 56849;
 }
 
-function sb_decrypt_user_id($userId){
+function wpat_decrypt_user_id($userId){
 return $userId - 56849;
 }
 
-function sb_get_referrals($userId) {
+function wpat_get_referrals($userId) {
 	$refs = get_user_meta($userId, 'sb_referral', false);
   	return $refs;
 }

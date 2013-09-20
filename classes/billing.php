@@ -380,10 +380,10 @@ class billing {
 
 		//add referrer
 		if ( !empty($this->referrer) ){			
-			$referrerId = sb_decrypt_user_id($this->referrer);
+			$referrerId = wpat_decrypt_user_id($this->referrer);
 			
 			if ($referrerId != $this->userID){
-				add_user_meta($referrerId, 'sb_referral', $this->subscriptionID);
+				add_user_meta($referrerId, 'wpat_referral', $this->subscriptionID);
 			}
 		}
 	}
