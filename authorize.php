@@ -71,7 +71,7 @@ function pageTemplates($single) {
 
 	if ( is_single( $silentReturnPostID ) ) {
 		return $dir . '/sbd.php';
-	}
+	}	
 }
 add_filter('single_template', 'pageTemplates');
 

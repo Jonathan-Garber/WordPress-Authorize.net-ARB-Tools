@@ -375,8 +375,16 @@ class billing {
 		if ( is_array( $this->addonData ) ){			
 			foreach ($this->addonData as $k => $v){
 				update_post_meta($this->subscriptionPostID, $k, $v);
-			}
+			}			
+		}
+
+		//add referrer
+		if ( !empty($this->referrer) ){			
+			$referrerId = sb_decrypt_user_id($this->referrer);
 			
+			if ($referrerId != $this->userID){
+				add_user_meta($referrerId, 'sb_referral', $this->subscriptionID);
+			}
 		}
 	}
 	

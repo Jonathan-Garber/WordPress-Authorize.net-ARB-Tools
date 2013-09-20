@@ -101,3 +101,6 @@ $settings = new billing();
   </div><!-- /wpat-settings-form -->
 
 </div><!-- /wrap -->
+
+<?php
+?>

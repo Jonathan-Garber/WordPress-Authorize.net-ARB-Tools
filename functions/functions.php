@@ -1,4 +1,18 @@
 <?php
+function sb_encrypt_user_id($userId){
+return $userId + 56849;
+}
+
+function sb_decrypt_user_id($userId){
+return $userId - 56849;
+}
+
+function sb_get_referrals($userId) {
+	$refs = get_user_meta($userId, 'sb_referral', false);
+  	return $refs;
+}
+
+
 function wpat_getARBSubscriptionStatus($subscription = ''){
 	$apiLogin = get_option('apiLogin');
 	$apiKey = get_option('apiKey');
