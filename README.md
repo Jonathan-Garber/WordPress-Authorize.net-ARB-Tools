@@ -12,7 +12,7 @@ Recurring payments are handled through Authorize.net ARB. This plugin only opera
 Version History
 ---------------
 ### 1.0.8
-+ Added core code a developer could use to do some basic tracking of referral ids. You encrypt a user ID and pass it as in a url parameter to your order form. The order form MUST submit this id under the name of "referrer" and the WPAT plugin will simply record the new subscription ID to the RefID users meta data.
++ Added core code a developer could use to do some basic tracking of referral ids. You encrypt a user ID and pass it in as a url parameter to your order form. The order form MUST submit this id under the name of "referrer" and the WPAT plugin will simply record the new subscription ID to the RefID users meta data.
 + New function names for RefID wpat_encrypt_user_id($userID), wpat_decrypt_user_id($userID), wpat_get_referrals($userID)
 
 ### 1.0.7
