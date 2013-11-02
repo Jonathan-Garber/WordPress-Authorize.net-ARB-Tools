@@ -2,7 +2,7 @@
 $transactions = get_posts(
   array(
     'author' => '-1',
-    'posts_per_page'  => -1,
+    'posts_per_page'  => 50,
     'post_type'       => 'auth-transactions',
     'post_status'     => 'publish'
   )

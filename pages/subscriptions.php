@@ -1,11 +1,10 @@
 <?php
-$subscriptions = get_posts(
-  array(
-    'posts_per_page'  => -1,
-    'post_type'       => 'auth-subscriptions',
-    'post_status'     => 'publish'
-  )
+$args = array(
+  'posts_per_page'  => 50,
+  'post_type'       => 'auth-subscriptions',
+  'post_status'     => 'publish'
 );
+$subscriptions = get_posts($args);
 ?>
 
 <div class="wrap wpat-wrap wpat-subscriptions">
