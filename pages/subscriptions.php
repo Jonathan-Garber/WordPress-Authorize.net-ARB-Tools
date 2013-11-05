@@ -18,8 +18,8 @@ $subscriptions = get_posts($args);
   <div class="aux-toolbar">
     <h5>Toggle Columns</h5>
     <div class="switches">
-      <button id="column-<?php echo $i=0; ?>" class="active">Post ID</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Date/Time</button>
+      <button id="column-<?php echo $i=0; ?>" class="active">Account Login</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Post ID</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing First Name</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Last Name</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Email</button>
@@ -66,6 +66,7 @@ $subscriptions = get_posts($args);
   <table class="wpat-subscriptions not-loaded data">
     <thead>
       <tr>
+        <th>Account Login</th>
         <th>Post ID</th>
         <th>Date/Time</th>
         <th>Billing First Name</th>
@@ -109,6 +110,7 @@ $subscriptions = get_posts($args);
     <tbody>
       <?php foreach ( $subscriptions as $t ) : ?>
       <tr id="transaction-<?php echo $t->ID; ?>">
+        <td><a href="<?php bloginfo('wpurl') ?>/wp-admin/user-edit.php?user_id=<?php echo $userData->ID; ?>"><?php echo $userData->user_login; ?></a></td>
         <td><?php echo $t->ID; ?></td>
         <td><?php echo get_post_time("F j, Y, g:i a",false,$t->ID); ?></td>
         <td><?php echo get_post_meta($t->ID,'billingFirstName',true); ?></td>
