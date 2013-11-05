@@ -18,8 +18,8 @@ $subscriptions = get_posts($args);
   <div class="aux-toolbar">
     <h5>Toggle Columns</h5>
     <div class="switches">
-      <button id="column-<?php echo $i = 0; ?>" class="active">Post ID</button>
-      <button id="column-<?php echo $i = $i+1; ?>" class="active">Account Login</button>
+      <button id="column-<?php echo $i = 0; ?>" class="active">Account Login</button>
+      <button id="column-<?php echo $i = $i+1; ?>" class="active">Post ID</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Date/Time</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing First Name</button>
       <button id="column-<?php echo $i = $i+1; ?>" class="active">Billing Last Name</button>
