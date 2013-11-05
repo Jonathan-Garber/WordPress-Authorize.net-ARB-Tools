@@ -109,6 +109,7 @@ $subscriptions = get_posts($args);
     </thead>
     <tbody>
       <?php foreach ( $subscriptions as $t ) : ?>
+      <?php $userData = get_userdata($t->post_author); ?>
       <tr id="transaction-<?php echo $t->ID; ?>">
         <td><a href="<?php bloginfo('wpurl') ?>/wp-admin/user-edit.php?user_id=<?php echo $userData->ID; ?>"><?php echo $userData->user_login; ?></a></td>
         <td><?php echo $t->ID; ?></td>
