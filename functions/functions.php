@@ -1,17 +1,21 @@
 <?php
 function wpat_encrypt_user_id($userId){
-return $userId + 56849;
+  return $userId + 56849;
 }
 
 function wpat_decrypt_user_id($userId){
-return $userId - 56849;
+  return $userId - 56849;
 }
 
 function wpat_get_referrals($userId) {
 	$refs = get_user_meta($userId, 'sb_referral', false);
-  	return $refs;
+  return $refs;
 }
 
+function wpat_get_postid_from_subid($subid){
+  global $wpdb;
+  return $wpdb->get_var("SELECT post_id FROM wp_postmeta WHERE meta_key = 'subscriptionID' AND meta_value = $subid");
+}
 
 function wpat_getARBSubscriptionStatus($subscription = ''){
 	$apiLogin = get_option('apiLogin');
