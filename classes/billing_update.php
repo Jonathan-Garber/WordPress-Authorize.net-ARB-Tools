@@ -19,8 +19,7 @@ class billingUpdate{
 		$this->apiEmail = get_option('apiEmail');
 
 		
-
-		$this->dateToday = date('Y-m-d');
+		$this->dateToday = date('Y-m-d', current_time('timestamp') );
 
 	
 

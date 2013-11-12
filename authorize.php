@@ -204,7 +204,7 @@ function doCancelSuspended(){
 			}
 	}	
 	$apiEmail = get_option('apiEmail');
-	$subject = "Daily Subscription Cancelation Report ".date('m-d-Y H:m:s A');
+	$subject = "Daily Subscription Cancelation Report ".date( 'Y-m-d H:m:s A', current_time('timestamp') );
 	$message = "The following subscriptions have been automatically canceled due to their suspension status. Any subscription marked suspended for more then 7 days from the last billing date are automatically canceled.\n\nCanceled Successfully: ".$successCount."\n\nFailed to Cancel: ".$failedCount."\n\n".$subscriptionList;
 	wp_mail($apiEmail,$subject,$message);
 }

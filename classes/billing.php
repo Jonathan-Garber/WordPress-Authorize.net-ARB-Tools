@@ -6,7 +6,7 @@ class billing {
 		$this->postID = $postID;
 
 		//dateToday never changes from todays actual date during the processes of this class.
-		$this->dateToday = date('Y-m-d');
+		$this->dateToday = date('Y-m-d', current_time('timestamp') );
 	
 		//API Settings
 		$this->apiLogin = get_option('apiLogin');
@@ -221,8 +221,9 @@ class billing {
 
 
 	public function calculateStartDate(){				
-		$cutOffDate = strtotime( date('Y-m-'.$this->cutOffDay) );
+		$cutOffDate = strtotime( date('Y-m-'.$this->cutOffDay, current_time('timestamp') ) );
 		$today = strtotime( $this->dateToday );
+
 		
 		//if date of order is past the cutOffDate we perform different actions
 		if ($today > $cutOffDate){

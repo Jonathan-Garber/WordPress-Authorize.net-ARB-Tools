@@ -11,7 +11,7 @@ class sbd {
 		$this->apiHashEnable = get_option('apiHashEnable');
 		$this->apiEmail = get_option('apiEmail');
 		$this->vtUser = get_option('vtUser');
-		$this->dateToday = date('Y-m-d');
+		$this->dateToday = date('Y-m-d', current_time('timestamp') );
 		
 		//Hardcoded for now
 		$this->emailSignature = 'The '.get_bloginfo('name').' Team';
@@ -542,7 +542,7 @@ Card Number: [-billingcardnumber-]\n\n
 
 		//if this sub does not have a last billing date that means it has not billed yet this is the FIRST time. So we set the date to the first of the current month
 		if ( empty($subscriptionLastBillingDate) ){
-			$subscriptionLastBillingDate = date('Y-m-01');
+			$subscriptionLastBillingDate = date('Y-m-01', current_time('timestamp'));
 		}
 
 		$subscriptionInterval = get_post_meta($this->subscriptionPostID, 'subscriptionInterval', true);
