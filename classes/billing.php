@@ -231,8 +231,9 @@ class billing {
 		}else{
 			$this->billInitialPayment = 'on';
 		}	
-			$this->startDate = strtotime(date('Y-m-'.$this->startDay, strtotime(date('Y-m-'.$this->startDay))) . '+1 month');
-			$this->startDate = date('Y-m-d', $this->startDate);
+		$firstday = date('Y-m-'.$this->startDay, current_time('timestamp'));
+		$this->startDate = strtotime($firstday . '+1 month');
+		$this->startDate = date('Y-m-d', $this->startDate);
 	}	
 	
 	/*
