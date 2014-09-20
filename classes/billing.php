@@ -274,6 +274,10 @@ class billing {
 					//return variable so we know we can redirect
 					$this->transactionSuccess = 'true';
 					
+				}else{
+					$this->errorMessage = 'Subscription Creation Error';
+					$this->errorArray = array ('type' => 'Subscription Error', 'message' => "Subscription Creation Failed. Please conact Customer Support.");
+					$this->transactionSuccess = 'false';
 				}
 			}
 			
@@ -296,6 +300,10 @@ class billing {
 						//insert subscription post
 						$this->insertSubscription();
 						$this->transactionSuccess = 'true';
+					}else{
+						$this->errorMessage = 'Subscription Creation Error';
+						$this->errorArray = array ('type' => 'Subscription Error', 'message' => "Subscription Creation Failed. You have not been billed for this subscription");
+						$this->transactionSuccess = 'false';
 					}
 				}
 			}
@@ -447,7 +455,8 @@ class billing {
 			)		
 		));
 		
-		if ($xml->isSuccessful()){
+		$response_code = (string) $xml->messages->message->code
+		if ( $response_code == "I00001" ){
 			$this->subscriptionID = (string) $xml->subscriptionId;
 		}else{
 			$message = (string) $xml->messages->message->text;
