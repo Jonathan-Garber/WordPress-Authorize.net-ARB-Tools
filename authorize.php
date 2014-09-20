@@ -3,7 +3,7 @@
 Plugin Name: WordPress Authorize.net ARB Tools
 Author: TechStudio
 Author URI: http://techstudio.co
-Version: 1.0.10
+Version: 1.0.11
 Description: WordPress Authorize.net ARB Tools is a WordPress plugin designed to allow developers to build subscription based billing management sites using WordPress, a custom theme and this plugin.
 */
 
