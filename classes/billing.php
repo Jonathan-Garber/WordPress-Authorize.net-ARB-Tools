@@ -455,7 +455,7 @@ class billing {
 			)		
 		));
 		
-		$response_code = (string) $xml->messages->message->code
+		$response_code = (string) $xml->messages->message->code;
 		if ( $response_code == "I00001" ){
 			$this->subscriptionID = (string) $xml->subscriptionId;
 		}else{
