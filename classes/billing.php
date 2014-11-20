@@ -462,11 +462,13 @@ class billing {
 			$message = (string) $xml->messages->message->text;
 			$this->errorMessage = 'Subscription Error: '.$message;
 			$this->errorArray = array ('type' => 'Subscription Error', 'message' => $message);
+			error_log($message, 0);
 			
 			if ($this->billInitialPayment == 'on'){
 				//We already billed for this subscription but it failed to create. We now need to void the billing charge.
 				$this->voidReason = 'Voided due to subscription creation error';
 				$this->processVoidTransaction();
+				error_log("Initial Payment Voided", 0);
 			}			
 		}
 	}
