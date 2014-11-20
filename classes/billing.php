@@ -68,6 +68,7 @@ class billing {
 		This is the void function called during the ordering process
 	*/
 	public function processVoidTransaction(){
+		error_log("Voiding Transaction", 0);
 		//invoice number is unique and used to associate all portions of the transaction being run together.
 		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
 		
@@ -83,8 +84,10 @@ class billing {
 		$this->responseCode = (string) $xml->transactionResponse->responseCode;
 		
 		if ($this->responseCode == '1'){
+			error_log("Void Successful", 0);
 			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{
+			error_log("Void Failed", 0);
 			$message = (string) $xml->messages->message->text;			
 			$this->errorMessage = 'Void Error: '.$message;
 			$this->errorArray = array ('type' => 'Void Error', 'message' => $message);
@@ -96,6 +99,7 @@ class billing {
 	*/
 	
 	public function processInitialPayment(){
+		error_log("Processing Initial Payment", 0);
 		//invoice number is unique and used to associate all portions of the transaction being run together.
 		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;	
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
@@ -158,8 +162,10 @@ class billing {
 		$this->responseCode = (string) $xml->transactionResponse->responseCode;
 		
 		if ($this->responseCode == '1'){
+			error_log("Initial Payment Successful", 0);
 			$this->transactionID = (string) $xml->transactionResponse->transId;
 		}else{
+			error_log("Initial Payment Failed", 0);
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
 			$this->errorMessage = 'Payment Error: '. $message;
 			$this->errorArray = array('type' => 'Payment Error', 'message' => $message);
@@ -170,6 +176,7 @@ class billing {
 		Runs pre-auth and void on CC info for 0.01cent
 	*/	
 	public function processPreAuth(){
+		error_log("Processing Pre-Auth", 0);
 		//invoice number is unique and used to associate all portions of the transaction being run together.
 		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;	
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
@@ -211,8 +218,10 @@ class billing {
 		$this->responseCode = (string) $xml->transactionResponse->responseCode;
 		
 		if ($this->responseCode == '1'){
+			error_log("Pre-Auth Successful", 0);
 			$this->transactionID = (string) $xml->transactionResponse->transId;
-		}else{			
+		}else{
+			error_log("Pre-Auth Failed", 0);
 			$message = (string) $xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;			
 			$this->errorMessage = 'Payment Error: '. $message;
 			$this->errorArray = array ('type' => 'Payment Error', 'message' => $message);
@@ -399,6 +408,7 @@ class billing {
 	}
 	
 	public function createSubscription(){
+		error_log("Creating Subscription on Authorize.net", 0);
 		//invoice number is unique and used to associate all portions of the transaction being run together.
 		$this->invoiceNumber = $this->uniqueID.'-'.$this->userID;
 		$xml = new AuthnetXML($this->apiLogin, $this->apiKey, $this->apiTestMode);
@@ -457,8 +467,10 @@ class billing {
 		
 		$response_code = (string) $xml->messages->message->code;
 		if ( $response_code == "I00001" ){
+			error_log("Subscription Created Successfully", 0);
 			$this->subscriptionID = (string) $xml->subscriptionId;
 		}else{
+			error_log("Subscription Creation Failed", 0);
 			$message = (string) $xml->messages->message->text;
 			$this->errorMessage = 'Subscription Error: '.$message;
 			$this->errorArray = array ('type' => 'Subscription Error', 'message' => $message);
