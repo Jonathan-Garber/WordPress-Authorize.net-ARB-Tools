@@ -447,13 +447,17 @@ class billingUpdate{
 			now we check to see what auth has it marked to determine what steps to take next
 		*/
 		
-		if ($this->subscriptionStatus == 'suspended') {		
+		if ($this->subscriptionStatus == 'suspended') {
+			error_log("Subscription Suspended on SB", 0);
 			if ($arbStatus ==  'suspended'){
 				/*
 					Auth has suspended this ARB on their end just like we did on ours due to failed payment
 					This means when we pre-auth and update our ends billing data AUTH will try to capture payment again next day
 					We will pre-auth and update users CC and billing data only
 				*/
+				error_log("Subscription Suspended on AUTH", 0);
+				error_log("Pre-Auth & Update Billing Only - SB set to Active", 0);
+				error_log("AUTH should re-capture missing payment next day", 0);
 				$this->updateMethod = 'preauth';
 				//Do Update
 				$this->updateARBBilling();
@@ -464,11 +468,15 @@ class billingUpdate{
 					was being used previously without issues and suddenly failed. Auth will NOT attempt to take payment for this missed payment again
 					We must update the CC and billing data and capture the missed payment
 				*/
+				error_log("Subscription Active on AUTH", 0);
+				error_log("AUTH will not recapure this payment", 0);
+				error_log("Capture missed payment & Update Billing - SB set to Active", 0);
 				$this->updateMethod = 'capture';
 				//Do Update
 				$this->updateARBBilling();
 			}
 		}else if ($this->subscriptionStatus == 'active') {
+			error_log("Subscription Active on SB", 0);
 			/*
 				We marked the subscription active on our end meaning we have accepted payment on its last run. We now check the status on Auths end to see what actions we need to perform.
 			*/
@@ -476,11 +484,14 @@ class billingUpdate{
 				/*
 					Auth has this ARB on their end marked as active and we have it marked active on our end. this means the user is simply updating their billing data so we will only need to pre-auth their data then update it. 
 				*/
+				error_log("Subscription Active on AUTH", 0);
+				error_log("Pre-Auth only - this customer is just updating their cc info", 0);				
 				$this->updateMethod = 'preauth';
 				//Do Update
 				$this->updateARBBilling();
 			}
 			if ($arbStatus ==  'suspended'){
+				error_log("Subscription Suspended on AUTH - Internal Error - requires investigation", 0);
 				/*
 					Auth has this ARB on their end marked as suspended and we have it marked active on our end. This means somewhere between our last successful billing of their card that Auth marked them suspended on their end. This should NEVER happen but if it does ever occur we need to have this checked out by an admin.
 				*/
