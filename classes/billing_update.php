@@ -917,11 +917,11 @@ class billingUpdate{
 		
 
 		if ($this->responseCode == '1'){
-
+			error_log("Payment Recaptured Successfully", 0);
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 
 		}else{
-
+			error_log("Payment Recapture Failed", 0);
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;	
 
 		}
