@@ -304,13 +304,16 @@ class billingUpdate{
 	
 
 	public function processBillingUpdateNoCC(){
+		error_log("Updating subscription address only", 0);
 		$arbStatus = wpat_getARBSubscriptionStatus($this->subscriptionID);
 		if ($this->subscriptionStatus == 'suspended') {
+				error_log("Updating cancelled - subscription suspended and requires full billing update", 0);
 				$this->response = 'We are sorry but your subscription is currently "Suspended". You must update payment information in order to make any changes to this subscription.';
 		}else if ($this->subscriptionStatus == 'active') {
 			if ($arbStatus ==  'active' || $arbStatus == 'suspended'){
 				$this->updateARBNoCC();
 			}else{
+				error_log("Updating Cancelled Internal Error", 0);
 				$this->response = 'There is an internal error with this subscription. Making any changes to this subscription is currently unavailable. An Administrator has been notified of this error.';
 				wp_mail($this->apiEmail, 'Internal Billing Update Error', 'Internal Update Error for this subscription ID'. $this->subscriptionID);
 			}
@@ -427,11 +430,11 @@ class billingUpdate{
 		}		
 
 		if ($xml->isSuccessful()){
-
+			error_log("Updating Subscription Address Successful", 0);
 			$this->arbUpdateStatus = (string) $xml->messages->resultCode;			
 
 		}else{
-
+			error_log("Updating Subscription Address Failed", 0);
 			$this->response = (string) 'ARB Update Error: '.$xml->messages->message->text;			
 
 		}
@@ -439,6 +442,7 @@ class billingUpdate{
 	}
 
 	public function processBillingUpdate(){
+		error_log("Updating Subscription Full Billing", 0);
 		//get status of this subscription right away from ARB
 		$arbStatus = wpat_getARBSubscriptionStatus($this->subscriptionID);
 		
@@ -505,24 +509,18 @@ class billingUpdate{
 
 	public function updateARBBilling(){
 
-	
-
 		if ($this->updateMethod == 'capture'){
-
 			$this->updateBillingCapture();
 
 
 
-		if ($this->responseCode == '1'){		
-
-					$this->updateARB();
-
-				}
+			if ($this->responseCode == '1'){
+				$this->updateARB();
+			}
 
 				
 
 		}else{
-
 			$this->updateBillingPreAuth();			
 
 		if ($this->responseCode == '1'){
@@ -731,6 +729,7 @@ class billingUpdate{
 	
 
 	public function updateBillingPreAuth(){
+		error_log("Pre-Auth Only", 0);
 
 		$this->refID = 'BPA-UID-'.$this->userID;
 
@@ -815,11 +814,11 @@ class billingUpdate{
 		
 
 		if ($this->responseCode == '1'){
-
+			error_log("Pre-Auth Only Successful", 0);
 			$this->transactionID = (string) $xml->transactionResponse->transId;			
 
 		}else{
-
+			error_log("Pre-Auth Only Failed", 0);
 			$this->response = (string) 'Payment Error: '.$xml->messages->message->text.' -- '.$xml->transactionResponse->errors->error->errorText;
 
 			
@@ -831,6 +830,7 @@ class billingUpdate{
 	
 
 	public function updateBillingCapture(){
+		error_log("Capture Missed Payment", 0);
 
 		//This will attempt to charge the user during updating billing data and then update the arb data and subscription here with new info
 
@@ -931,7 +931,7 @@ class billingUpdate{
 	
 
 	public function voidBillingPreAuth(){
-
+		error_log("Void Pre-Auth", 0);
 		$this->refID = 'BUPV-PA-U-'.$this->userID;
 
 		
@@ -959,11 +959,11 @@ class billingUpdate{
 		
 
 		if ($this->responseCode == '1'){
-
+			error_log("Void Pre-Auth Successful", 0);
 			$this->voidCode = (string) $xml->transactionResponse->responseCode;
 
 		}else{
-
+			error_log("Void Pre-Auth Failed", 0);
 			$this->response = (string) 'Void Error: '.$xml->messages->message->text;
 
 			
