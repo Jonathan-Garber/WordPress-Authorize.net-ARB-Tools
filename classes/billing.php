@@ -249,6 +249,7 @@ class billing {
 		Runs after submitted data and pre-auths/voids the card and creates ARB when successful
 	*/
 	public function processARB(){
+		error_log("Processing Order For ".$this->userEmail, 0);
 	
 		/*
 			we calculate the startDate and set the initial billing based on cutOff Date
