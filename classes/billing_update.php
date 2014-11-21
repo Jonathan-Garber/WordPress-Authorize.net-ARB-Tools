@@ -304,7 +304,7 @@ class billingUpdate{
 	
 
 	public function processBillingUpdateNoCC(){
-		error_log("Updating subscription address only", 0);
+		error_log("Processing Billing Update of Address Only for ".$this->billingEmail, 0);
 		$arbStatus = wpat_getARBSubscriptionStatus($this->subscriptionID);
 		if ($this->subscriptionStatus == 'suspended') {
 				error_log("Updating cancelled - subscription suspended and requires full billing update", 0);
@@ -442,7 +442,7 @@ class billingUpdate{
 	}
 
 	public function processBillingUpdate(){
-		error_log("Processing Billing Update For ".$this->billingEmail, 0);
+		error_log("Processing Billing Update with Credit Card For ".$this->billingEmail, 0);
 		//get status of this subscription right away from ARB
 		$arbStatus = wpat_getARBSubscriptionStatus($this->subscriptionID);
 		
