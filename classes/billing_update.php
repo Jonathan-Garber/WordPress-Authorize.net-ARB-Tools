@@ -442,7 +442,7 @@ class billingUpdate{
 	}
 
 	public function processBillingUpdate(){
-		error_log("Updating Subscription Full Billing", 0);
+		error_log("Processing Billing Update For ".$this->billingEmail, 0);
 		//get status of this subscription right away from ARB
 		$arbStatus = wpat_getARBSubscriptionStatus($this->subscriptionID);
 		
